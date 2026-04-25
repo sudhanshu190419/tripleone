@@ -37,22 +37,26 @@ function DestinationCard({ destination, index }: { destination: Destination; ind
   const inView = useInView(ref);
 
   return (
-    <div
-      ref={ref}
-      className="dc relative aspect-[3/4] cursor-pointer overflow-hidden rounded-[18px] shadow-[0_2px_10px_rgba(0,0,0,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_40px_rgba(0,0,0,0.1)]"
-      style={{
-        background: destination.bg,
-        opacity: inView ? 1 : 0,
-        transform: inView ? "translateY(0)" : "translateY(22px)",
-        transition: `opacity .5s ease ${index * 0.08}s, transform .5s ease ${index * 0.08}s`,
-      }}
-    >
-      <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(28,25,23,0.55)_0%,transparent_55%)]" />
-      <div className="absolute bottom-4 left-4">
-        <div className="font-display text-[15px] font-semibold leading-[1.2] text-white">{destination.name}</div>
-        <div className="mt-0.5 text-[11px] text-white/65">{destination.sub}</div>
-      </div>
+    <div className="relative aspect-[3/4] overflow-hidden rounded-[18px] group">
+  
+  <img
+    src={destination.image}
+    alt={destination.name}
+    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+  />
+
+  {/* overlay */}
+  <div className="absolute inset-0 bg-black/40" />
+
+  <div className="absolute bottom-4 left-4">
+    <div className="text-white font-semibold text-[15px]">
+      {destination.name}
     </div>
+    <div className="text-white/70 text-[11px]">
+      {destination.sub}
+    </div>
+  </div>
+</div>
   );
 }
 

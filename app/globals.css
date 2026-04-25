@@ -12,13 +12,11 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-body), "Nunito Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
-  font-weight: 400;
+  font-family: system-ui, -apple-system, sans-serif;
+  
 }
 
-.font-display {
-  font-family: var(--font-display), "Times New Roman", serif;
-}
+
 
 * {
   box-sizing: border-box;
@@ -26,6 +24,13 @@ body {
 
 ::selection {
   background: #e07b5422;
+}
+
+.container-custom {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-left: clamp(16px, 4vw, 40px);
+  padding-right: clamp(16px, 4vw, 40px);
 }
 
 .reveal-up {
@@ -99,6 +104,34 @@ body {
 .soft-card-hover:hover {
   transform: translateY(-5px);
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.12);
+}
+.carousel-track {
+  display: flex;
+  
+  min-height: 100%;
+  align-items: center;
+  height: clamp(220px, 35vh, 380px);
+  width: 600px;
+  object-fit: cover;
+  border-radius: 16px;
+  animation: scrollCarousel 80s linear infinite;
+  gap: 20px;
+}
+
+.carousel-track img {
+  height: 100%;
+  width: 600px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+@keyframes scrollCarousel {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes reveal-up {

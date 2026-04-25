@@ -29,7 +29,7 @@ export default function PropertyCard({ property, priority = false }: PropertyCar
 				/>
 				<button
 					type="button"
-					className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#222222] backdrop-blur-sm transition-transform duration-200 hover:scale-105 active:scale-95"
+					className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/72 text-[#222222] backdrop-blur-sm transition-transform duration-200 hover:scale-105 active:scale-95"
 					aria-label={`Save ${property.title}`}
 				>
 					<svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">

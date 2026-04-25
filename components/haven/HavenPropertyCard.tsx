@@ -1,94 +1,178 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback, memo, ReactNode } from "react";
 import { HeartIcon, MapPinIcon, StarIcon } from "@/components/havenIcons";
 import { categoryGradients, categories, type HomeProperty } from "@/components/homeData";
 import { useInView } from "@/components/havenHooks";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+
+/* ─── Types ─────────────────────────────────────────────────── */
 
 type HavenPropertyCardProps = {
   property: HomeProperty;
   index: number;
 };
 
-export default function HavenPropertyCard({ property, index }: HavenPropertyCardProps) {
+
+/* ─── Sub-components ─────────────────────────────────────────── */
+
+const ImagePlaceholder = memo(function ImagePlaceholder({
+  image,
+  tag,
+  liked,
+  title,
+  location,
+  onToggleLike,
+}: {
+  image: string;
+  tag?: string;
+  liked: boolean;
+  title: string;
+  location: string;
+  onToggleLike: (e: React.MouseEvent) => void;
+}) {
+  return (
+    <div className="relative h-56 overflow-hidden group">
+  <Image
+  src={
+  image && image.trim() !== ""
+    ? image
+    : "/property-placeholder.jpg"
+}
+    alt={`${title} - luxury stay located in ${location}`}
+    fill
+    className="object-cover transition-transform duration-500 group-hover:scale-105"
+  />
+
+  {/* overlay for readability */}
+  <div className="absolute inset-0 bg-black/10" />
+
+  {/* Tag */}
+  {tag && (
+    <span className="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold">
+      {tag}
+    </span>
+  )}
+
+  {/* Like button */}
+  <button
+  aria-label={liked ? "Remove from favorites" : "Add to favorites"}
+    type="button"
+    onClick={onToggleLike}
+    className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm transition-all duration-200 hover:scale-110 hover:bg-white focus:ring-2 focus:ring-[#E07B54]"
+  >
+    <HeartIcon active={liked} />
+  </button>
+</div>
+  );
+});
+
+
+const PriceRow = memo(function PriceRow({
+  price,
+  reviews,
+}: {
+  price: number;
+  reviews: number;
+}) {
+  const formattedReviews = new Intl.NumberFormat("en-US", { notation: "compact" }).format(reviews);
+
+  return (
+    <div className="flex items-center justify-between border-t border-stone-100 pt-3">
+      <div className="flex items-baseline gap-1">
+        <span className="text-base font-bold text-stone-900">${price.toLocaleString()}</span>
+        <span className="text-xs text-stone-400">/ night</span>
+      </div>
+      <div className="flex items-center gap-1 text-[11px] text-stone-400">
+        <span>{formattedReviews} reviews</span>
+      </div>
+    </div>
+  );
+});
+
+/* ─── Main component ─────────────────────────────────────────── */
+
+function HavenPropertyCard({ property, index }: HavenPropertyCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref);
   const [liked, setLiked] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const router = useRouter();
 
-  const [start, end] = categoryGradients[property.category] ?? categoryGradients.all;
-  const icon = categories.find((cat) => cat.id === property.category)?.icon ?? "🏠";
+  
+
+  const toggleLike = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setLiked((prev) => !prev);
+  }, []);
+
+  const handleMouseEnter = useCallback(() => setHovered(true), []);
+  const handleMouseLeave = useCallback(() => setHovered(false), []);
+
+  /* Staggered entrance */
+  const delay = `${index * 0.065}s`;
+  const entrance: React.CSSProperties = {
+    opacity: inView ? 1 : 0,
+    transform: inView ? "translateY(0) scale(1)" : "translateY(28px) scale(0.97)",
+    transition: `opacity 0.5s ease ${delay}, transform 0.5s ease ${delay}`,
+  };
+
+  /* Hover lift */
+  const cardStyle: React.CSSProperties = {
+    boxShadow: hovered
+      ? "0 20px 48px -8px rgba(0,0,0,0.18), 0 4px 16px -4px rgba(0,0,0,0.08)"
+      : "0 2px 12px rgba(0,0,0,0.05)",
+    transform: hovered ? "translateY(-6px)" : "translateY(0)",
+    transition: "box-shadow 0.3s ease, transform 0.3s ease",
+  };
 
   return (
-    <div
-      ref={ref}
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? "translateY(0)" : "translateY(26px)",
-        transition: `opacity .55s ease ${index * 0.07}s, transform .55s ease ${index * 0.07}s`,
-      }}
-    >
+    <div ref={ref} style={entrance}>
       <article
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        className="overflow-hidden rounded-[20px] bg-white"
-        style={{
-          boxShadow: hovered ? "0 18px 50px rgba(0,0,0,0.12)" : "0 2px 14px rgba(0,0,0,0.06)",
-          transform: hovered ? "translateY(-5px)" : "translateY(0)",
-          transition: "box-shadow .35s ease, transform .35s ease",
-        }}
+        onClick={() => router.push(`/property/${property.id}`)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        style={cardStyle}
+        className="overflow-hidden rounded-2xl border border-stone-100 bg-white cursor-pointer"
       >
-        <div className="relative h-[220px] overflow-hidden" style={{ background: `linear-gradient(145deg, ${start}, ${end})` }}>
-          <div className="absolute left-[14%] top-[18%] h-[90px] w-[90px] rounded-full bg-white/20" />
-          <div className="absolute bottom-[12%] right-[16%] h-[120px] w-[120px] rounded-full bg-white/15" />
-          <div className="absolute left-1/2 top-1/2 text-4xl" style={{ transform: "translate(-50%,-50%)" }}>
-            {icon}
-          </div>
+        <ImagePlaceholder
+  image={property.images?.[0] || "/fallback-property.jpg"}
+  tag={property.tag}
+  liked={liked}
+  title={property.title}
+  location={property.location}
+  onToggleLike={toggleLike}
+/>
 
-          {property.tag ? (
-            <div className="absolute left-3.5 top-3.5 rounded-[20px] bg-white px-3 py-1 text-[11px] font-bold text-[#1C1917] shadow-[0_1px_6px_rgba(0,0,0,0.1)]">
-              {property.tag}
-            </div>
-          ) : null}
-
-          <button
-            onClick={(event) => {
-              event.stopPropagation();
-              setLiked((current) => !current);
-            }}
-            className="absolute right-3.5 top-3.5 flex h-[34px] w-[34px] items-center justify-center rounded-full border-none bg-white text-[#A8A29E] shadow-[0_1px_6px_rgba(0,0,0,0.12)]"
-            style={{ transform: liked ? "scale(1.18)" : "scale(1)", transition: "transform .2s" }}
-            aria-label={`Toggle favorite for ${property.title}`}
-          >
-            <HeartIcon active={liked} />
-          </button>
-        </div>
-
-        <div className="px-[18px] pb-5 pt-4">
-          <div className="mb-1 flex items-start justify-between gap-2">
-            <h3 className="m-0 flex-1 pr-2 text-sm font-bold leading-[1.35] text-[#1C1917]">{property.title}</h3>
-            <span className="flex shrink-0 items-center gap-1 text-[#E07B54]">
+        <div className="px-4 pb-4 pt-3.5">
+          {/* Title + rating */}
+          <div className="mb-1.5 flex items-start justify-between gap-2">
+            <h3 className="flex-1 truncate pr-2 text-sm font-semibold leading-snug text-stone-900">
+              {property.title}
+            </h3>
+            <div className="flex shrink-0 items-center gap-1 rounded-full bg-[#FFF7ED] px-3 py-1 shadow-sm border border-[#FED7AA]">
               <StarIcon />
-              <span className="text-[13px] font-bold text-[#1C1917]">{property.rating}</span>
-            </span>
-          </div>
-
-          <div className="mb-2 flex items-center gap-1 text-xs text-[#A8A29E]">
-            <MapPinIcon />
-            {property.location}
-          </div>
-
-          <div className="mb-3.5 text-[11px] text-[#C4BAB4]">{property.nights}</div>
-
-          <div className="flex items-center justify-between border-t border-[#F5F0EC] pt-3.5">
-            <div>
-              <span className="text-base font-bold text-[#1C1917]">${property.price}</span>
-              <span className="ml-1 text-xs text-[#A8A29E]">/night</span>
+              <span className="text-[13px] font-bold tabular-nums text-[#C2410C]">
+                {property.rating}
+              </span>
             </div>
-            <span className="text-[11px] text-[#C4BAB4]">{property.reviews} reviews</span>
           </div>
+
+          {/* Location */}
+          <div className="mb-1.5 flex items-center gap-1 text-xs text-stone-500">
+            <MapPinIcon />
+            <span className="truncate">{property.location}</span>
+          </div>
+
+          {/* Nights label */}
+          <p className="mb-3 text-[11px] leading-none text-stone-400">{property.nights}</p>
+
+          <PriceRow price={property.price} reviews={property.reviews} />
         </div>
       </article>
     </div>
   );
 }
+
+export default memo(HavenPropertyCard);
