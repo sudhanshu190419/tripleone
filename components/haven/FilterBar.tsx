@@ -291,7 +291,7 @@ export default function FilterBar({ filters, setFilters }: Props) {
       <div style={{
         position: "sticky", top: 80, zIndex: 90,
         borderBottom: "1px solid #EDE8E2",
-        background: "rgba(250,248,245,0.97)",
+        background: "white",
         backdropFilter: "blur(12px)",
       }}>
         <div style={{

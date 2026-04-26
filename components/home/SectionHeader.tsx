@@ -96,39 +96,7 @@ export function SectionHeader({
         {/* ── Left: eyebrow + heading + meta ── */}
         <div style={{ minWidth: 0, flex: 1 }}>
 
-          {/* Eyebrow label with flanking line */}
-          {eyebrow && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                marginBottom: 18,
-                animation: "sh-up .5s ease both",
-              }}
-            >
-              <span
-                style={{
-                  display: "block",
-                  height: 1,
-                  width: 28,
-                  background: "#C76644",
-                  flexShrink: 0,
-                }}
-              />
-              <span
-                style={{
-                  fontSize: 10.5,
-                  fontWeight: 600,
-                  letterSpacing: "0.20em",
-                  textTransform: "uppercase",
-                  color: "#C76644",
-                }}
-              >
-                {eyebrow}
-              </span>
-            </div>
-          )}
+         
 
           {/* Main heading — Cormorant Garamond serif */}
           <h2

@@ -47,9 +47,9 @@ const ImagePanel = memo(function ImagePanel({
       style={{
         position: "relative",
         width: "100%",
-        paddingBottom: "68%", // 3:2-ish ratio — immersive but not too tall
+        paddingBottom: "78%", // 3:2-ish ratio — immersive but not too tall
         overflow: "hidden",
-        borderRadius: "20px 20px 0 0",
+        borderRadius: "18px",
         flexShrink: 0,
       }}
     >
@@ -234,9 +234,9 @@ const ImagePanelFull = memo(function ImagePanelFull({
       style={{
         position: "relative",
         width: "100%",
-        paddingBottom: "68%",
+        paddingBottom: "88%",
         overflow: "hidden",
-        borderRadius: "20px 20px 0 0",
+        borderRadius: "18px",
         flexShrink: 0,
       }}
     >
@@ -374,10 +374,11 @@ function HavenPropertyCard({ property, index }: HavenPropertyCardProps) {
         aria-label={`View ${property.title}`}
         style={{
           // ── Surface ──
-          background: "#FFFFFF",               // warm cream — not white
-          borderRadius: 24,
-          border: "1px solid rgba(222, 212, 198, 0.75)",
-          overflow: "hidden",
+          background: "#FFFCF8",
+borderRadius: 24,
+border: "1px solid rgba(222, 212, 198, 0.75)",
+padding: 10,
+overflow: "visible",
           cursor: "pointer",
           display: "flex",
           flexDirection: "column",
@@ -405,7 +406,7 @@ function HavenPropertyCard({ property, index }: HavenPropertyCardProps) {
         {/* ── Body ── */}
         <div
           style={{
-            padding: "16px 18px 18px",
+            padding: "14px 10px 10px",
             display: "flex",
             flexDirection: "column",
             gap: 0,
@@ -499,7 +500,7 @@ function HavenPropertyCard({ property, index }: HavenPropertyCardProps) {
                 style={{
                   fontSize: 11.5,
                   color: "#A89E94",
-                  fontWeight: 400,
+                  fontWeight: 900,
                 }}
               >
                 / night

@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body
-  className={`${inter.className} ${cormorant.variable} min-h-full flex flex-col`}
+  className={`${inter.className} ${cormorant.variable} min-h-full flex flex-col bg-[#F8F2EA]`}
 >
         <Navbar isScrolled={false} forceSearch />
         {children}

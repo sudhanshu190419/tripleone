@@ -194,7 +194,7 @@ export default function HorizontalPropertySection({
         <div className="rounded-[32px] border border-[#EEE7DF] px-8 py-8"
 style={{
   background:
-    "linear-gradient(180deg, #FFFDFB 0%, #FAF6F1 100%)",
+    "linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%)",
     boxShadow:
     "inset 0 1px 0 rgba(255,255,255,0.9), 0 10px 30px rgba(28,25,23,0.04)",
 }}>
