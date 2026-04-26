@@ -8,6 +8,7 @@ import HavenListings from "@/components/haven/HavenListings";
 import HavenLowerSections from "@/components/haven/HavenLowerSections";
 import Footer from "@/components/layout/Footer";
 import InstagramSection from "@/components/home/InstagramSection";
+import HomeSections from "@/components/home/HomeSections";
 import {
   CalendarIcon,
   MapPinIcon,
@@ -464,6 +465,7 @@ export default function HavenHome() {
       />
       <HavenListings activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
       <HavenLowerSections />
+      
       <InstagramSection />
       <Footer />
     </div>

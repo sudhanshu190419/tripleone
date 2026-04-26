@@ -114,8 +114,8 @@ function HavenPropertyCard({ property, index }: HavenPropertyCardProps) {
   const delay = `${index * 0.065}s`;
   const entrance: React.CSSProperties = {
     opacity: inView ? 1 : 0,
-    transform: inView ? "translateY(0) scale(1)" : "translateY(28px) scale(0.97)",
-    transition: `opacity 0.5s ease ${delay}, transform 0.5s ease ${delay}`,
+    marginTop: inView ? "0px" : "28px",
+    transition: `opacity 0.5s ease ${delay}, margin-top 0.5s ease ${delay}`,
   };
 
   /* Hover lift */
@@ -123,8 +123,8 @@ function HavenPropertyCard({ property, index }: HavenPropertyCardProps) {
     boxShadow: hovered
       ? "0 20px 48px -8px rgba(0,0,0,0.18), 0 4px 16px -4px rgba(0,0,0,0.08)"
       : "0 2px 12px rgba(0,0,0,0.05)",
-    transform: hovered ? "translateY(-6px)" : "translateY(0)",
-    transition: "box-shadow 0.3s ease, transform 0.3s ease",
+   transform: hovered ? "translateY(-6px)" : "translateY(0px)",
+transition: "box-shadow 0.3s ease, transform 0.3s ease",
   };
 
   return (

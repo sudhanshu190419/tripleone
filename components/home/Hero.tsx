@@ -13,7 +13,7 @@ import {
 type HavenHeroProps = {
   ready: boolean;
   searchLocation: string;
-stayType: string;
+  stayType: string;
   setSearchLocation: (value: string) => void;
   setStayType: (value: string) => void;
   focusIndex: number | null;
@@ -24,18 +24,17 @@ stayType: string;
   onSearchFocus: () => void;
 };
 
+// Removed the static flex values from here
 const searchFields = [
   {
     icon: <MapPinIcon />,
     label: "Destination",
     placeholder: "Search destinations…",
-    flex: "2",
   },
   {
     icon: <UsersIcon />,
     label: "Stay Type",
     placeholder: "Select type",
-    flex: "1.4",
   },
 ];
 
@@ -43,14 +42,9 @@ const CAROUSEL_IMAGES = [
   "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600&q=70",
   "https://images.unsplash.com/photo-1494526585095-c41746248156?w=600&q=70",
   "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=70",
-  
 ];
 
-
-
 export default function HavenHero({
-
-  
   ready,
   searchLocation,
   stayType,
@@ -65,17 +59,16 @@ export default function HavenHero({
 }: HavenHeroProps) {
 
   const router = useRouter();
-  
-  
 
-const handleSearch = () => {
-  console.log(searchLocation);
-  if (!searchLocation?.trim()) return;
+  const handleSearch = () => {
+    console.log(searchLocation);
+    if (!searchLocation?.trim()) return;
 
-  router.push(
-  `/search?location=${encodeURIComponent(searchLocation)}&type=${encodeURIComponent(stayType)}`
-)
-};
+    router.push(
+      `/search?location=${encodeURIComponent(searchLocation)}&type=${encodeURIComponent(stayType)}`
+    )
+  };
+
   return (
     <>
       {/* ── Keyframes ─────────────────────────────────────────────────────── */}
@@ -191,9 +184,7 @@ const handleSearch = () => {
         </div>
 
         {/* ── Content – centred vertically ─────────────────────────────────── */}
-        <div
-          className="relative z-10 flex min-h-[calc(100vh-80px)] flex-col items-center justify-center px-4 py-12 sm:px-6"
-        >
+        <div className="relative z-10 flex min-h-[calc(100vh-80px)] flex-col items-center justify-center px-4 py-12 sm:px-6">
 
           {/* ── GLASS CARD ──────────────────────────────────────────────────── */}
           <div
@@ -229,83 +220,82 @@ const handleSearch = () => {
                 pointerEvents: stickyActive ? "none" : "auto",
               }}
             >
-              {/* Bar */}
-              <div className="flex items-stretch gap-0 relative rounded-2xl border border-[#E8E0D8] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.09)]">
-                {searchFields.map((field, idx) => (
-                  <div
-                    key={field.label}
-                    className="search-field-divider min-w-0 cursor-text px-4 py-3 transition-colors duration-150"
-                    style={{
-                      flex: field.flex,
-                      background: focusIndex === idx ? "#FDF5F1" : "transparent",
-                    }}
-                    onMouseDown={() => setFocusIndex(idx)}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      {/* Icon */}
-                      <span
-                        className="shrink-0 transition-colors duration-150"
-                        style={{ color: focusIndex === idx ? "#E07B54" : "#C4BAB4" }}
-                      >
-                        {field.icon}
-                      </span>
-                      {/* Label + input */}
-                      <div className="relative min-w-0 text-left">
-                        <div className="mb-0.5 text-[10px] font-bold uppercase tracking-[0.07em] text-[#1C1917]">
-                          {field.label}
+              {/* Bar Container - Column on Mobile, Row on Desktop */}
+              <div className="flex flex-col sm:flex-row items-stretch gap-3 sm:gap-0 relative sm:rounded-2xl sm:border sm:border-[#E8E0D8] sm:bg-white sm:shadow-[0_4px_24px_rgba(0,0,0,0.09)]">
+                
+                {/* Inputs Row - Shares the same line horizontally on both mobile and desktop */}
+                <div className="flex flex-1 items-stretch rounded-2xl border border-[#E8E0D8] bg-white shadow-sm sm:rounded-none sm:border-none sm:bg-transparent sm:shadow-none overflow-hidden sm:overflow-visible">
+                  {searchFields.map((field, idx) => (
+                    <div
+                      key={field.label}
+                      // Make flex-1 (equal) on mobile, and apply the custom ratios on sm+ screens
+                      className={`search-field-divider min-w-0 cursor-text px-3 py-3 sm:px-4 sm:py-3 transition-colors duration-150 flex-1 ${
+                        idx === 0 ? "sm:flex-[2]" : "sm:flex-[1.4]"
+                      }`}
+                      style={{
+                        background: focusIndex === idx ? "#FDF5F1" : "transparent",
+                      }}
+                      onMouseDown={() => setFocusIndex(idx)}
+                    >
+                      <div className="flex items-center gap-2 sm:gap-2.5">
+                        {/* Icon */}
+                        <span
+                          className="shrink-0 transition-colors duration-150"
+                          style={{ color: focusIndex === idx ? "#E07B54" : "#C4BAB4" }}
+                        >
+                          {field.icon}
+                        </span>
+                        {/* Label + input */}
+                        <div className="relative min-w-0 text-left w-full">
+                          <div className="mb-0.5 text-[10px] font-bold uppercase tracking-[0.07em] text-[#1C1917]">
+                            {field.label}
+                          </div>
+                          <input
+                            value={
+                              field.label === "Destination"
+                                ? searchLocation
+                                : field.label === "Stay Type"
+                                ? stayType
+                                : undefined
+                            }
+                            onChange={(e) => {
+                              if (field.label === "Destination") {
+                                setSearchLocation(e.target.value);
+                              }
+                              if (field.label === "Stay Type") {
+                                setStayType(e.target.value);
+                              }
+                            }}
+                            placeholder={field.placeholder}
+                            className="w-full truncate bg-transparent text-[13px] text-[#78716C] outline-none placeholder:text-[#C4BAB4]"
+                            onFocus={() => {
+                              setFocusIndex(idx);
+                              if (
+                                field.label === "Destination" ||
+                                field.label === "Stay Type"
+                              ) {
+                                onSearchFocus();
+                              }
+                            }}
+                            onBlur={() => {
+                              setFocusIndex(null);
+                            }}
+                          />
                         </div>
-                        <input
-                        
-  value={
-    
-  field.label === "Destination"
-    ? searchLocation
-    : field.label === "Stay Type"
-    ? stayType
-    : undefined
-}
-  onChange={(e) => {
-    if (field.label === "Destination") {
-  setSearchLocation(e.target.value);
-}
-
-if (field.label === "Stay Type") {
-  setStayType(e.target.value);
-}
-  }}
-  placeholder={field.placeholder}
-  className="w-full truncate bg-transparent text-[13px] text-[#78716C] outline-none placeholder:text-[#C4BAB4]"
-  onFocus={() => {
-  setFocusIndex(idx);
-
-  if (
-    field.label === "Destination" ||
-    field.label === "Stay Type"
-  ) {
-    onSearchFocus();
-  }
-}}
-  onBlur={() => {
-  setFocusIndex(null);
-}}
-
-/>
-
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
 
-                {/* Search button */}
-                <div className="flex shrink-0 items-center px-2.5">
-                  <button onClick={handleSearch} className="search-btn flex items-center gap-2 rounded-xl px-5 py-2.5 text-[13px] font-bold text-white">
+                {/* Search button Container - Stacked Below on Mobile */}
+                <div className="flex shrink-0 items-center sm:px-2.5">
+                  <button onClick={handleSearch} className="search-btn w-full flex justify-center items-center gap-2 rounded-xl px-5 py-3.5 sm:py-2.5 text-[14px] sm:text-[13px] font-bold text-white">
                     <SearchIcon />
-                    <span className="hidden sm:inline">Search</span>
+                    <span>Search</span>
                   </button>
                 </div>
               </div>
 
-              
             </div>
             {/* end search */}
 
