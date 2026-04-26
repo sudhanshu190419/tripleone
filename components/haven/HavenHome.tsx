@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/home/Hero";
-import HavenListings from "@/components/haven/HavenListings";
+import FilterBar from "@/components/haven/FilterBar";
 import HavenLowerSections from "@/components/haven/HavenLowerSections";
 import Footer from "@/components/layout/Footer";
 import InstagramSection from "@/components/home/InstagramSection";
@@ -41,7 +41,7 @@ const destinationIcons: Record<string, React.ReactNode> = {
 
 export default function HavenHome() {
   const router = useRouter();
-  const [activeCategory, setActiveCategory] = useState("all");
+  
   const [searchLocation, setSearchLocation] = useState("");
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
   const [showStickySearch, setShowStickySearch] = useState(false);
@@ -51,6 +51,13 @@ export default function HavenHome() {
   const [isHeroVisible, setIsHeroVisible] = useState(true);
   const stickyInputRef = useRef<HTMLInputElement>(null);
   const [stayType, setStayType] = useState("");
+  const [filters, setFilters] = useState({
+  type: null,
+  location: null,
+  budget: null,
+  availability: null,
+  sort: null,
+});
 
   // Destination dropdown state
   const [showDestDropdown, setShowDestDropdown] = useState(false);
@@ -463,7 +470,12 @@ export default function HavenHome() {
         onSearchFocus={handleSearchFocus}
         
       />
-      <HavenListings activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
+      <FilterBar
+  filters={filters}
+  setFilters={setFilters}
+/>
+
+<HomeSections filters={filters} />
       <HavenLowerSections />
       
       <InstagramSection />

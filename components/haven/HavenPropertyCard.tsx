@@ -1,28 +1,37 @@
 "use client";
 
-import { useRef, useState, useCallback, memo, ReactNode } from "react";
+import { useRef, useState, useCallback, memo } from "react";
 import { HeartIcon, MapPinIcon, StarIcon } from "@/components/havenIcons";
-import { categoryGradients, categories, type HomeProperty } from "@/components/homeData";
+import { type HomeProperty } from "@/components/homeData";
 import { useInView } from "@/components/havenHooks";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-/* ─── Types ─────────────────────────────────────────────────── */
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 type HavenPropertyCardProps = {
   property: HomeProperty;
   index: number;
 };
 
+// ─── Shadows ──────────────────────────────────────────────────────────────────
 
-/* ─── Sub-components ─────────────────────────────────────────── */
+const SHADOW_REST =
+  "0 1px 2px rgba(28,20,12,0.04), 0 4px 12px rgba(28,20,12,0.06), 0 12px 32px rgba(28,20,12,0.05)";
 
-const ImagePlaceholder = memo(function ImagePlaceholder({
+const SHADOW_HOVER =
+  "0 2px 4px rgba(28,20,12,0.06), 0 12px 32px rgba(28,20,12,0.14), 0 32px 64px rgba(28,20,12,0.10)";
+
+// ─── ImagePanel ───────────────────────────────────────────────────────────────
+
+const ImagePanel = memo(function ImagePanel({
   image,
   tag,
   liked,
   title,
   location,
+  hovered,
   onToggleLike,
 }: {
   image: string;
@@ -30,68 +39,306 @@ const ImagePlaceholder = memo(function ImagePlaceholder({
   liked: boolean;
   title: string;
   location: string;
+  hovered: boolean;
   onToggleLike: (e: React.MouseEvent) => void;
 }) {
   return (
-    <div className="relative h-56 overflow-hidden group">
-  <Image
-  src={
-  image && image.trim() !== ""
-    ? image
-    : "/property-placeholder.jpg"
-}
-    alt={`${title} - luxury stay located in ${location}`}
-    fill
-    className="object-cover transition-transform duration-500 group-hover:scale-105"
-  />
+    <div
+      style={{
+        position: "relative",
+        width: "100%",
+        paddingBottom: "68%", // 3:2-ish ratio — immersive but not too tall
+        overflow: "hidden",
+        borderRadius: "20px 20px 0 0",
+        flexShrink: 0,
+      }}
+    >
+      <Image
+        src={image && image.trim() !== "" ? image : "/property-placeholder.jpg"}
+        alt={`${title} – luxury stay in ${location}`}
+        fill
+        sizes="(max-width: 768px) 100vw, 320px"
+        style={{
+          objectFit: "cover",
+          transition: "transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+          transform: hovered ? "scale(1.07)" : "scale(1)",
+        }}
+      />
 
-  {/* overlay for readability */}
-  <div className="absolute inset-0 bg-black/10" />
+      {/* Ambient bottom gradient — depth + readability */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "linear-gradient(to top, rgba(14,10,6,0.55) 0%, rgba(14,10,6,0.18) 38%, transparent 65%)",
+          pointerEvents: "none",
+        }}
+      />
 
-  {/* Tag */}
-  {tag && (
-    <span className="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold">
-      {tag}
-    </span>
-  )}
+      {/* Tag */}
+      {tag && (
+        <span
+          style={{
+            position: "absolute",
+            top: 12,
+            left: 12,
+            background: "rgba(255,255,255,0.94)",
+            backdropFilter: "blur(8px)",
+            color: "#3a3020",
+            fontSize: 11,
+            fontWeight: 600,
+            letterSpacing: "0.04em",
+            textTransform: "uppercase",
+            padding: "4px 10px",
+            borderRadius: 99,
+            border: "1px solid rgba(255,255,255,0.6)",
+          }}
+        >
+          {tag}
+        </span>
+      )}
 
-  {/* Like button */}
-  <button
-  aria-label={liked ? "Remove from favorites" : "Add to favorites"}
-    type="button"
-    onClick={onToggleLike}
-    className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm transition-all duration-200 hover:scale-110 hover:bg-white focus:ring-2 focus:ring-[#E07B54]"
-  >
-    <HeartIcon active={liked} />
-  </button>
-</div>
-  );
-});
+      {/* Like button */}
+      <button
+        onClick={onToggleLike}
+        aria-label={liked ? "Remove from wishlist" : "Save to wishlist"}
+        style={{
+          position: "absolute",
+          top: 12,
+          right: 12,
+          width: 34,
+          height: 34,
+          borderRadius: "50%",
+          background: liked ? "rgba(224,123,84,0.92)" : "rgba(255,255,255,0.88)",
+          backdropFilter: "blur(8px)",
+          border: "1px solid rgba(255,255,255,0.5)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          transition: "background .2s, transform .2s cubic-bezier(.34,1.56,.64,1)",
+          transform: liked ? "scale(1.12)" : "scale(1)",
+        }}
+        onMouseEnter={(e) => {
+          if (!liked)
+            (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.98)";
+        }}
+        onMouseLeave={(e) => {
+          if (!liked)
+            (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.88)";
+        }}
+      >
+        <HeartIcon
+          style={{
+            color: liked ? "#fff" : "#9b8f83",
+            fill: liked ? "#fff" : "none",
+            width: 15,
+            height: 15,
+            transition: "color .2s, fill .2s",
+          }}
+        />
+      </button>
 
-
-const PriceRow = memo(function PriceRow({
-  price,
-  reviews,
-}: {
-  price: number;
-  reviews: number;
-}) {
-  const formattedReviews = new Intl.NumberFormat("en-US", { notation: "compact" }).format(reviews);
-
-  return (
-    <div className="flex items-center justify-between border-t border-stone-100 pt-3">
-      <div className="flex items-baseline gap-1">
-        <span className="text-base font-bold text-stone-900">${price.toLocaleString()}</span>
-        <span className="text-xs text-stone-400">/ night</span>
-      </div>
-      <div className="flex items-center gap-1 text-[11px] text-stone-400">
-        <span>{formattedReviews} reviews</span>
+      {/* Rating badge — lives on image for premium feel */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 12,
+          right: 12,
+          display: "flex",
+          alignItems: "center",
+          gap: 4,
+          background: "rgba(255,255,255,0.92)",
+          backdropFilter: "blur(8px)",
+          border: "1px solid rgba(255,255,255,0.5)",
+          borderRadius: 99,
+          padding: "4px 10px",
+        }}
+      >
+        <StarIcon style={{ width: 12, height: 12, color: "#E07B54" }} />
+        <span
+          style={{
+            fontSize: 12.5,
+            fontWeight: 700,
+            color: "#1C1917",
+            letterSpacing: "-0.01em",
+          }}
+        >
+          {/* rating is passed from parent below */}
+        </span>
       </div>
     </div>
   );
 });
 
-/* ─── Main component ─────────────────────────────────────────── */
+// ─── RatingBadge (on image) — standalone so it can receive the value ─────────
+
+const RatingBadge = memo(function RatingBadge({ rating }: { rating: number }) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        bottom: 12,
+        right: 12,
+        display: "flex",
+        alignItems: "center",
+        gap: 4,
+        background: "rgba(255,255,255,0.92)",
+        backdropFilter: "blur(8px)",
+        border: "1px solid rgba(255,255,255,0.5)",
+        borderRadius: 99,
+        padding: "4px 10px",
+        zIndex: 1,
+      }}
+    >
+      <StarIcon style={{ width: 12, height: 12, color: "#E07B54" }} />
+      <span
+        style={{
+          fontSize: 12.5,
+          fontWeight: 700,
+          color: "#1C1917",
+          letterSpacing: "-0.01em",
+        }}
+      >
+        {rating}
+      </span>
+    </div>
+  );
+});
+
+// ─── ImagePanelFull — combines image + overlays + rating ─────────────────────
+
+const ImagePanelFull = memo(function ImagePanelFull({
+  image,
+  tag,
+  liked,
+  title,
+  location,
+  rating,
+  hovered,
+  onToggleLike,
+}: {
+  image: string;
+  tag?: string;
+  liked: boolean;
+  title: string;
+  location: string;
+  rating: number;
+  hovered: boolean;
+  onToggleLike: (e: React.MouseEvent) => void;
+}) {
+  return (
+    <div
+      style={{
+        position: "relative",
+        width: "100%",
+        paddingBottom: "68%",
+        overflow: "hidden",
+        borderRadius: "20px 20px 0 0",
+        flexShrink: 0,
+      }}
+    >
+      <Image
+        src={image && image.trim() !== "" ? image : "/property-placeholder.jpg"}
+        alt={`${title} – luxury stay in ${location}`}
+        fill
+        sizes="(max-width: 768px) 100vw, 320px"
+        style={{
+          objectFit: "cover",
+          transition: "transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+          transform: hovered ? "scale(1.07)" : "scale(1)",
+        }}
+      />
+
+      {/* Gradient overlay */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "linear-gradient(to top, rgba(14,10,6,0.58) 0%, rgba(14,10,6,0.16) 40%, transparent 65%)",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Tag */}
+      {tag && (
+        <span
+          style={{
+            position: "absolute",
+            top: 12,
+            left: 12,
+            background: "rgba(255,255,255,0.94)",
+            backdropFilter: "blur(8px)",
+            color: "#3a3020",
+            fontSize: 10.5,
+            fontWeight: 700,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            padding: "4px 10px",
+            borderRadius: 99,
+          }}
+        >
+          {tag}
+        </span>
+      )}
+
+      {/* Like */}
+      <button
+        onClick={onToggleLike}
+        aria-label={liked ? "Remove from wishlist" : "Save to wishlist"}
+        style={{
+          position: "absolute",
+          top: 12,
+          right: 12,
+          width: 34,
+          height: 34,
+          borderRadius: "50%",
+          background: liked ? "rgba(224,123,84,0.95)" : "rgba(255,255,255,0.88)",
+          backdropFilter: "blur(8px)",
+          border: "none",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          transition:
+            "background .2s ease, transform .25s cubic-bezier(.34,1.56,.64,1)",
+          transform: liked ? "scale(1.15)" : "scale(1)",
+          zIndex: 2,
+        }}
+        onMouseEnter={(e) => {
+          if (!liked)
+            (e.currentTarget as HTMLElement).style.background =
+              "rgba(255,255,255,1)";
+        }}
+        onMouseLeave={(e) => {
+          if (!liked)
+            (e.currentTarget as HTMLElement).style.background =
+              "rgba(255,255,255,0.88)";
+        }}
+      >
+        <HeartIcon
+          style={{
+            color: liked ? "#fff" : "#9b8f83",
+            fill: liked ? "#fff" : "none",
+            width: 15,
+            height: 15,
+            flexShrink: 0,
+            transition: "color .2s, fill .2s",
+          }}
+        />
+      </button>
+
+      {/* Rating — bottom right on image */}
+      <RatingBadge rating={rating} />
+    </div>
+  );
+});
+
+// ─── Main component ───────────────────────────────────────────────────────────
 
 function HavenPropertyCard({ property, index }: HavenPropertyCardProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -99,8 +346,6 @@ function HavenPropertyCard({ property, index }: HavenPropertyCardProps) {
   const [liked, setLiked] = useState(false);
   const [hovered, setHovered] = useState(false);
   const router = useRouter();
-
-  
 
   const toggleLike = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -110,65 +355,202 @@ function HavenPropertyCard({ property, index }: HavenPropertyCardProps) {
   const handleMouseEnter = useCallback(() => setHovered(true), []);
   const handleMouseLeave = useCallback(() => setHovered(false), []);
 
-  /* Staggered entrance */
+  // Staggered entrance via inView
   const delay = `${index * 0.065}s`;
-  const entrance: React.CSSProperties = {
-    opacity: inView ? 1 : 0,
-    marginTop: inView ? "0px" : "28px",
-    transition: `opacity 0.5s ease ${delay}, margin-top 0.5s ease ${delay}`,
-  };
-
-  /* Hover lift */
-  const cardStyle: React.CSSProperties = {
-    boxShadow: hovered
-      ? "0 20px 48px -8px rgba(0,0,0,0.18), 0 4px 16px -4px rgba(0,0,0,0.08)"
-      : "0 2px 12px rgba(0,0,0,0.05)",
-   transform: hovered ? "translateY(-6px)" : "translateY(0px)",
-transition: "box-shadow 0.3s ease, transform 0.3s ease",
-  };
 
   return (
-    <div ref={ref} style={entrance}>
+    <div
+      ref={ref}
+      style={{
+        opacity: inView ? 1 : 0,
+        transform: inView ? "translateY(0)" : "translateY(24px)",
+        transition: `opacity 0.5s ease ${delay}, transform 0.5s ease ${delay}`,
+      }}
+    >
       <article
         onClick={() => router.push(`/property/${property.id}`)}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        style={cardStyle}
-        className="overflow-hidden rounded-2xl border border-stone-100 bg-white cursor-pointer"
-      >
-        <ImagePlaceholder
-  image={property.images?.[0] || "/fallback-property.jpg"}
-  tag={property.tag}
-  liked={liked}
-  title={property.title}
-  location={property.location}
-  onToggleLike={toggleLike}
-/>
+        aria-label={`View ${property.title}`}
+        style={{
+          // ── Surface ──
+          background: "#FFFFFF",               // warm cream — not white
+          borderRadius: 24,
+          border: "1px solid rgba(222, 212, 198, 0.75)",
+          overflow: "hidden",
+          cursor: "pointer",
+          display: "flex",
+          flexDirection: "column",
 
-        <div className="px-4 pb-4 pt-3.5">
-          {/* Title + rating */}
-          <div className="mb-1.5 flex items-start justify-between gap-2">
-            <h3 className="flex-1 truncate pr-2 text-sm font-semibold leading-snug text-stone-900">
-              {property.title}
-            </h3>
-            <div className="flex shrink-0 items-center gap-1 rounded-full bg-[#FFF7ED] px-3 py-1 shadow-sm border border-[#FED7AA]">
-              <StarIcon />
-              <span className="text-[13px] font-bold tabular-nums text-[#C2410C]">
-                {property.rating}
-              </span>
-            </div>
-          </div>
+          // ── Elevation ──
+          boxShadow: hovered ? SHADOW_HOVER : SHADOW_REST,
+          transform: hovered ? "translateY(-7px) scale(1.008)" : "translateY(0) scale(1)",
+          transition:
+            "box-shadow 0.35s cubic-bezier(0.25,0.46,0.45,0.94), transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)",
+          willChange: "transform, box-shadow",
+        }}
+      >
+        {/* ── Image ── */}
+        <ImagePanelFull
+          image={property.images?.[0] || "/fallback-property.jpg"}
+          tag={property.tag}
+          liked={liked}
+          title={property.title}
+          location={property.location}
+          rating={property.rating}
+          hovered={hovered}
+          onToggleLike={toggleLike}
+        />
+
+        {/* ── Body ── */}
+        <div
+          style={{
+            padding: "16px 18px 18px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 0,
+            flex: 1,
+          }}
+        >
+          {/* Title */}
+          <h3
+            style={{
+              margin: 0,
+              fontSize: 15.5,
+              fontWeight: 600,
+              color: "#1A1410",
+              letterSpacing: "-0.025em",
+              lineHeight: 1.3,
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {property.title}
+          </h3>
 
           {/* Location */}
-          <div className="mb-1.5 flex items-center gap-1 text-xs text-stone-500">
-            <MapPinIcon />
-            <span className="truncate">{property.location}</span>
+          <div
+            style={{
+              marginTop: 7,
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
+            <MapPinIcon
+              style={{ width: 12, height: 12, color: "#C07850", flexShrink: 0 }}
+            />
+            <span
+              style={{
+                fontSize: 12.5,
+                color: "#7A6E65",
+                fontWeight: 500,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {property.location}
+            </span>
           </div>
 
           {/* Nights label */}
-          <p className="mb-3 text-[11px] leading-none text-stone-400">{property.nights}</p>
+          {property.nights && (
+            <p
+              style={{
+                margin: "5px 0 0",
+                fontSize: 11.5,
+                color: "#B0A89E",
+                fontWeight: 400,
+              }}
+            >
+              {property.nights}
+            </p>
+          )}
 
-          <PriceRow price={property.price} reviews={property.reviews} />
+          {/* ── Divider ── */}
+          <div
+            style={{
+              marginTop: 14,
+              borderTop: "1px solid rgba(200,188,174,0.4)",
+              paddingTop: 14,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 8,
+            }}
+          >
+            {/* Price */}
+            <div style={{ display: "flex", alignItems: "baseline", gap: 3 }}>
+              <span
+                style={{
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: "#1A1410",
+                  letterSpacing: "-0.03em",
+                  lineHeight: 1,
+                }}
+              >
+                ₹{property.price.toLocaleString()}
+              </span>
+              <span
+                style={{
+                  fontSize: 11.5,
+                  color: "#A89E94",
+                  fontWeight: 400,
+                }}
+              >
+                / night
+              </span>
+            </div>
+
+            {/* CTA */}
+            <Link
+              href={`/property/${property.id}`}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 5,
+                padding: "8px 14px",
+                background: hovered
+                  ? "#C76644"
+                  : "#E07B54",
+                color: "#fff",
+                fontSize: 12.5,
+                fontWeight: 600,
+                letterSpacing: "0.01em",
+                borderRadius: 10,
+                textDecoration: "none",
+                transition: "background .2s ease, gap .2s cubic-bezier(.34,1.56,.64,1)",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+              }}
+            >
+              View stay
+              <svg
+                width={12}
+                height={12}
+                viewBox="0 0 12 12"
+                fill="none"
+                style={{
+                  transition: "transform .2s cubic-bezier(.34,1.56,.64,1)",
+                  transform: hovered ? "translateX(2px)" : "translateX(0)",
+                  flexShrink: 0,
+                }}
+              >
+                <path
+                  d="M2.5 6h7M6.5 3l3 3-3 3"
+                  stroke="#fff"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
+          </div>
         </div>
       </article>
     </div>
