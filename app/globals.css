@@ -17,6 +17,19 @@ body {
 }
 
 
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  40%, 100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 3.2s ease-in-out infinite;
+}
+
 
 * {
   box-sizing: border-box;

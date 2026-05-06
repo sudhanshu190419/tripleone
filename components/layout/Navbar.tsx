@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import CompactSearchBar from "@/components/search/CompactSearchBar";
 
 type NavbarProps = {
   isScrolled?: boolean;
   forceSearch?: boolean;
   onExpand?: () => void;
+  searchLocation: string;
+  stayType: string;
 };
 
 // ── tiny SVG icons (no extra dep) ──────────────────────────────────────────
@@ -60,7 +63,13 @@ const NotifDot = () => (
                    bg-[#FF385C] ring-2 ring-white" />
 );
 
-export default function Navbar({ isScrolled= true, forceSearch, onExpand }: NavbarProps) {
+export default function Navbar({
+  isScrolled = true,
+  forceSearch,
+  onExpand,
+  searchLocation,
+  stayType,
+}: NavbarProps) {
   const [menuOpen,  setMenuOpen]  = useState(false);
   const [hoverHost, setHoverHost] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -124,29 +133,30 @@ export default function Navbar({ isScrolled= true, forceSearch, onExpand }: Navb
                         justify-between px-4 sm:px-6 lg:px-10">
 
           {/* ── LOGO ─────────────────────────────────────────────────── */}
-          <a href="/" className="hidden md:flex items-center gap-2.5 flex-shrink-0 group select-none">
-            {/* icon mark */}
-            <div className="relative w-9 h-9 rounded-xl bg-[#FF385C] flex items-center
-                            justify-center shadow-[0_2px_8px_rgba(255,56,92,0.35)]
-                            transition-transform duration-200 group-hover:scale-105">
-              <span className="text-white font-bold text-base leading-none"
-                    style={{ fontFamily: "'DM Sans', sans-serif" }}>S</span>
-              {/* subtle shine */}
-              <span className="absolute inset-0 rounded-xl bg-gradient-to-br
-                               from-white/20 to-transparent pointer-events-none" />
+          <a href="/" className="hidden md:flex items-center flex-shrink-0 group select-none">
+            <div className="relative h-12 w-[172px] overflow-hidden lg:h-14 lg:w-[192px]">
+              <Image
+                src="/logo.svg"
+                alt="Stayfinder logo"
+                fill
+                priority
+                sizes="(min-width: 1024px) 192px, 172px"
+                className="object-cover object-left transition-transform duration-200 group-hover:scale-[1.04]"
+              />
             </div>
-            {/* wordmark */}
-            <span className="text-[#222] font-semibold text-[17px] tracking-[-0.3px]
-                             transition-colors duration-200 group-hover:text-[#FF385C]">
-              Stayfinder
-            </span>
           </a>
 
           {/* ── COMPACT LOGO (mobile) ─────────────────────────────────── */}
-          <a href="/" className="flex md:hidden items-center gap-2 flex-shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-[#FF385C] flex items-center
-                            justify-center shadow-[0_2px_6px_rgba(255,56,92,0.3)]">
-              <span className="text-white font-bold text-sm">S</span>
+          <a href="/" className="flex md:hidden items-center flex-shrink-0">
+            <div className="relative h-10 w-[138px] overflow-hidden">
+              <Image
+                src="/logo.svg"
+                alt="Stayfinder logo"
+                fill
+                priority
+                sizes="138px"
+                className="object-cover object-left"
+              />
             </div>
           </a>
 
@@ -156,6 +166,8 @@ export default function Navbar({ isScrolled= true, forceSearch, onExpand }: Navb
   isScrolled={isScrolled}
   forceShow={forceSearch}
   onExpand={onExpand}
+  searchLocation={searchLocation}
+  stayType={stayType}
 />
           </div>
 

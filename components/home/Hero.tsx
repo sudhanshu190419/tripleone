@@ -61,13 +61,21 @@ export default function HavenHero({
   const router = useRouter();
 
   const handleSearch = () => {
-    console.log(searchLocation);
-    if (!searchLocation?.trim()) return;
+  if (!searchLocation.trim()) {
+    alert("Please enter destination");
+    return;
+  }
 
-    router.push(
-      `/search?location=${encodeURIComponent(searchLocation)}&type=${encodeURIComponent(stayType)}`
-    )
-  };
+  const params = new URLSearchParams();
+
+  params.set("location", searchLocation.trim());
+
+  if (stayType.trim()) {
+    params.set("type", stayType.trim());
+  }
+
+  router.push(`/search?${params.toString()}`);
+};
 
   return (
     <>
@@ -195,19 +203,19 @@ export default function HavenHero({
             {/* Badge */}
             <div className="hero-badge  mb-7 inline-flex items-center gap-2 rounded-full border border-[#F8D5C4] bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#B85A30]">
               <span className="dot-pulse block h-1.5 w-1.5 rounded-full bg-[#E07B54]" />
-              4 million+ stays · 220 countries
+              Curated stays · Memorable escapes
             </div>
 
             {/* Headline */}
             <h1 className="hero-h1 mb-4 text-[clamp(2.4rem,5.5vw,4rem)] font-bold leading-[1.06] tracking-[-0.025em] text-[#1C1917]"
                 style={{ fontFamily: "'Playfair Display', serif" }}>
-              Find your perfect<br />
-              <em className="italic text-[#E07B54]">place to stay.</em>
+              TripleOne<br />
+              <em className="italic text-[#E07B54]">Your comfort zone.</em>
             </h1>
 
             {/* Subtitle */}
             <p className="hero-sub mx-auto mb-8 max-w-[460px] text-[clamp(14px,1.8vw,16px)] font-normal leading-[1.8] text-[#57534E]">
-              Handpicked villas, cabins &amp; hideaways for travellers who want something truly memorable.
+              Discover premium villas, hotels &amp; private spaces for your next escape.
             </p>
 
             {/* ── Search Bar ──────────────────────────────────────────────── */}
@@ -224,13 +232,12 @@ export default function HavenHero({
               <div className="flex flex-col sm:flex-row items-stretch gap-3 sm:gap-0 relative sm:rounded-2xl sm:border sm:border-[#E8E0D8] sm:bg-white sm:shadow-[0_4px_24px_rgba(0,0,0,0.09)]">
                 
                 {/* Inputs Row - Shares the same line horizontally on both mobile and desktop */}
-                <div className="flex flex-1 items-stretch rounded-2xl border border-[#E8E0D8] bg-white shadow-sm sm:rounded-none sm:border-none sm:bg-transparent sm:shadow-none overflow-hidden sm:overflow-visible">
+                <div className="flex flex-col sm:flex-row flex-1 rounded-2xl border border-[#E8E0D8] bg-white shadow-sm sm:rounded-none sm:border-none sm:bg-transparent sm:shadow-none overflow-hidden">
                   {searchFields.map((field, idx) => (
                     <div
                       key={field.label}
                       // Make flex-1 (equal) on mobile, and apply the custom ratios on sm+ screens
-                      className={`search-field-divider min-w-0 cursor-text px-3 py-3 sm:px-4 sm:py-3 transition-colors duration-150 flex-1 ${
-                        idx === 0 ? "sm:flex-[2]" : "sm:flex-[1.4]"
+                      className={`search-field-divider min-w-0 cursor-text px-3 py-3 sm:px-4 sm:py-3 transition-colors duration-150 w-full sm:flex-1 ${idx === 0 ? "sm:flex-[2]" : "sm:flex-[1.4]"}
                       }`}
                       style={{
                         background: focusIndex === idx ? "#FDF5F1" : "transparent",

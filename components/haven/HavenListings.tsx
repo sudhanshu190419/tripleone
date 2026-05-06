@@ -8,7 +8,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { ArrowRightIcon } from "@/components/havenIcons";
 
 import HavenPropertyCard from "@/components/haven/HavenPropertyCard";
-import FilterBar from "@/components/haven/FilterBar";
+import FilterBar, { FilterValues } from "@/components/haven/FilterBar";
 
 type HavenListingsProps = {
   activeCategory: string;
@@ -23,7 +23,7 @@ export default function HavenListings({
   setActiveCategory,
 
  }: HavenListingsProps) {
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<FilterValues>({
   type: null,
   location: null,
   budget: null,

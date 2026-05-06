@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import HorizontalPropertySection from "./HorizontalPropertySection";
+import WhyChooseTripleOne from "./WhyChooseTripleOne";
 
 export default function HomeSections({
   filters,
@@ -126,6 +127,8 @@ export default function HomeSections({
         subtitle="Most booked spaces loved by guests this week."
         properties={noidaStays}
       />
+
+      <WhyChooseTripleOne />
     </>
   );
 }

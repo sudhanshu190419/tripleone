@@ -17,7 +17,8 @@ export type HomeProperty = {
   nights: string;
   tag?: string;
   category: string;
-  images: string[];
+  images?: string[];
+  image?: string;
   phone: string; 
   address: string;
   email: string;

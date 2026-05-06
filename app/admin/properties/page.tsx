@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
 import { collection, getDocs, deleteDoc, doc,updateDoc, } from "firebase/firestore";
 import Link from "next/link";
+import AdminPropertySkeleton from "@/components/skeletons/AdminPropertySkeleton";
 
 type Property = {
   id: string;
@@ -70,7 +71,16 @@ export default function AdminPropertiesPage() {
   };
 
   if (loading) {
-    return <div className="p-8">Loading...</div>;
+    return (
+      <div className="max-w-6xl mx-auto px-6 py-16">
+        <div className="mb-8 h-10 w-64 rounded-full bg-[#EDE5DB] animate-pulse" />
+        <div className="space-y-4">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <AdminPropertySkeleton key={index} />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (

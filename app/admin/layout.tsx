@@ -16,6 +16,14 @@ const menuItems = [
     name: "Manage Properties",
     path: "/admin/properties",
   },
+  {
+    name: "Locations",
+    path: "/admin/settings/locations",
+  },
+  {
+    name: "Categories",
+    path: "/admin/settings/categories",
+  },
 ];
 
 export default function AdminLayout({

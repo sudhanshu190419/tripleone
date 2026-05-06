@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/home/Hero";
-import FilterBar from "@/components/haven/FilterBar";
+import FilterBar, { FilterValues } from "@/components/haven/FilterBar";
 import HavenLowerSections from "@/components/haven/HavenLowerSections";
 import Footer from "@/components/layout/Footer";
 import InstagramSection from "@/components/home/InstagramSection";
@@ -15,22 +15,9 @@ import {
   SearchIcon,
   UsersIcon,
 } from "@/components/havenIcons";
+import { PROPERTY_CATEGORY_COLLECTION, PROPERTY_LOCATION_COLLECTION } from "@/lib/propertyTaxonomy";
+import { usePropertyTaxonomy } from "@/hooks/usePropertyTaxonomy";
 
-const suggestedDestinations = [
-  { name: "Nearby", subtitle: "Find what's around you", icon: "location" },
-  { name: "Varanasi, Uttar Pradesh", subtitle: "Because your wishlist has stays in Varanasi", icon: "landmark" },
-  { name: "Noida, Uttar Pradesh", subtitle: "Guests interested in New Delhi also looked here", icon: "city" },
-  { name: "Dehradun, Uttarakhand", subtitle: "For nature lovers", icon: "nature" },
-  { name: "Mussoorie, Uttarakhand", subtitle: "Hill escape", icon: "mountain" },
-];
-
-const STAY_TYPES = [
-  { value: "", label: "Any type", icon: "✦" },
-  { value: "home", label: "Entire home", icon: "🏡" },
-  { value: "studio", label: "Studio apartment", icon: "🏢" },
-  { value: "villa", label: "Villa", icon: "🌴" },
-  { value: "cabin", label: "Cabin", icon: "🪵" },
-];
 const destinationIcons: Record<string, React.ReactNode> = {
   location: <MapPinIcon />,
   landmark: <CalendarIcon />,
@@ -41,6 +28,14 @@ const destinationIcons: Record<string, React.ReactNode> = {
 
 export default function HavenHome() {
   const router = useRouter();
+  const {
+    items: locations,
+    loading: locationsLoading,
+  } = usePropertyTaxonomy(PROPERTY_LOCATION_COLLECTION);
+  const {
+    items: categories,
+    loading: categoriesLoading,
+  } = usePropertyTaxonomy(PROPERTY_CATEGORY_COLLECTION);
   
   const [searchLocation, setSearchLocation] = useState("");
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
@@ -50,8 +45,8 @@ export default function HavenHome() {
   const heroRef = useRef<HTMLDivElement>(null);
   const [isHeroVisible, setIsHeroVisible] = useState(true);
   const stickyInputRef = useRef<HTMLInputElement>(null);
-  const [stayType, setStayType] = useState("");
-  const [filters, setFilters] = useState({
+  const [stayType, setStayType] = useState<string | null>(null);
+const [filters, setFilters] = useState<FilterValues>({
   type: null,
   location: null,
   budget: null,
@@ -113,24 +108,71 @@ export default function HavenHome() {
 
   const openDestDropdown = () => {
     if (destDropdownTimer.current) clearTimeout(destDropdownTimer.current);
+    setShowTypeDropdown(false);
     setShowDestDropdown(true);
   };
+
   const closeDestDropdown = () => {
     destDropdownTimer.current = setTimeout(() => setShowDestDropdown(false), 160);
   };
+
   const openTypeDropdown = () => {
     if (typeDropdownTimer.current) clearTimeout(typeDropdownTimer.current);
+    setShowDestDropdown(false);
     setShowTypeDropdown(true);
   };
+
   const closeTypeDropdown = () => {
     typeDropdownTimer.current = setTimeout(() => setShowTypeDropdown(false), 160);
   };
 
-  const selectedType = STAY_TYPES.find((t) => t.value === stayType) ?? STAY_TYPES[0];
+  const toggleTypeDropdown = () => {
+    if (!showTypeDropdown) {
+      setShowDestDropdown(false); // 👈 Force close Destination
+      setShowTypeDropdown(true);
+    } else {
+      setShowTypeDropdown(false);
+    }
+  };
+
+  const suggestedDestinations = locations.map((location) => ({
+    name: location.name,
+    subtitle: `Explore stays in ${location.name}`,
+    icon: "city",
+  }));
+
+  const stayTypeOptions = [
+    { value: "any", label: "Any type", icon: "✦" },
+    ...categories.map((category) => ({
+      value: category.name,
+      label: category.name,
+      icon: "🏷️",
+    })),
+  ];
+
+  const selectedType =
+  stayType
+    ? stayTypeOptions.find((t) => t.value === stayType)
+    : null;
+
+  const destinationLabel = locationsLoading
+    ? "Loading locations..."
+    : "Nearby";
+
+  const destinationSubtitle = locationsLoading
+    ? "Fetching admin-managed locations"
+    : suggestedDestinations.length > 0
+    ? "Find what's around you"
+    : "No locations added yet";
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#1C1917]">
-      <Navbar isScrolled={!isHeroVisible} />
+      <Navbar
+  isScrolled={!isHeroVisible}
+  searchLocation={searchLocation}
+  stayType={stayType}
+  onExpand={() => setShowStickySearch(true)}
+/>
 
       {/* ── Sticky Search ─────────────────────────────────────────────────── */}
       <style>{`
@@ -164,6 +206,13 @@ export default function HavenHome() {
           border-left: 1px solid #EDE7DF;
         }
 
+        @media (min-width: 640px) {
+  .sticky-field + .sticky-field {
+    border-top: none;
+    border-left: 1px solid #EDE7DF;
+  }
+}
+
         /* ─── Dropdown spring ─── */
         @keyframes dropIn {
           0%   { opacity: 0;   transform: translateY(-6px) scale(0.97); }
@@ -195,7 +244,7 @@ export default function HavenHome() {
           background: #FDF5F1;
         }
         .type-row.type-active {
-          background: #FEF3EE;
+          background: #FFF4EC;
         }
 
         /* ─── Search button ─── */
@@ -227,6 +276,21 @@ export default function HavenHome() {
         .sticky-field-active {
           background: #FDF5F1 !important;
         }
+          /* ─── Premium Scrollbar ─── */
+        .premium-scrollbar::-webkit-scrollbar {
+          width: 5px;
+        }
+        .premium-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .premium-scrollbar::-webkit-scrollbar-thumb {
+          background-color: #E8E0D8;
+          border-radius: 10px;
+        }
+        .premium-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: #E8E0D8 transparent;
+        }
       `}</style>
 
       {showStickySearch && (
@@ -243,7 +307,7 @@ export default function HavenHome() {
             <div className="mx-auto max-w-[800px]">
 
               <div
-                className="sticky-search-bar flex items-stretch overflow-visible rounded-2xl border bg-white"
+                className="sticky-search-bar flex flex-col gap-2 sm:gap-0 sm:flex-row overflow-visible rounded-2xl border bg-[#FCF8F4] sm:bg-white"
                 style={{
                   borderColor: "#E8E0D8",
                   boxShadow: "0 4px 6px -1px rgba(0,0,0,0.04), 0 16px 48px -8px rgba(28,25,23,0.16), 0 0 0 1px rgba(255,255,255,0.8) inset",
@@ -252,10 +316,13 @@ export default function HavenHome() {
 
                 {/* ── Where ── */}
                 <div
-                  className="sticky-field relative min-w-0 flex-[2] cursor-text rounded-l-2xl px-4 py-3 transition-colors duration-150 sticky-field-active"
+                  className={`sticky-field relative w-full bg-white sm:flex-[2] cursor-text rounded-t-2xl sm:rounded-l-2xl sm:rounded-t-none px-4 py-3 transition-colors duration-150 ${
+                    showDestDropdown ? "z-50 sticky-field-active" : "z-10"
+                  }`}
                   onFocus={openDestDropdown}
                   onBlur={closeDestDropdown}
                 >
+                  {/* We keep the icon and input in their own row */}
                   <div className="flex items-center gap-2.5">
                     <span className="shrink-0" style={{ color: "#E07B54" }}>
                       <MapPinIcon />
@@ -275,72 +342,79 @@ export default function HavenHome() {
                         className="w-full truncate bg-transparent text-[13.5px] font-medium outline-none"
                         style={{ color: "#1C1917" }}
                       />
-
-                      {/* Destination dropdown */}
-                      {showDestDropdown && (
-                        <div
-                          className="sticky-dropdown absolute left-0 top-[calc(100%+10px)] z-50 overflow-hidden rounded-2xl border bg-white"
-                          style={{
-                            width: "340px",
-                            borderColor: "#EDE7DF",
-                            boxShadow: "0 4px 6px -1px rgba(0,0,0,0.04), 0 20px 48px -8px rgba(28,25,23,0.18)",
-                          }}
-                          onMouseDown={(e) => e.preventDefault()}
-                        >
-                          {/* Header */}
-                          <div className="border-b px-4 pt-3 pb-2" style={{ borderColor: "#F0EBE4" }}>
-                            <p className="text-[10px] font-bold uppercase tracking-[0.1em]" style={{ color: "#A8A29E" }}>
-                              Suggested for you
-                            </p>
-                          </div>
-
-                          <div className="p-2">
-                            {suggestedDestinations
-                              .filter((d) =>
-                                searchLocation.trim() === "" ||
-                                d.name.toLowerCase().includes(searchLocation.toLowerCase())
-                              )
-                              .map((dest, i) => (
-                                <button
-                                  key={dest.name}
-                                  type="button"
-                                  onClick={() => { setSearchLocation(dest.name); setShowDestDropdown(false); }}
-                                  className="dest-row flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left"
-                                  style={{ animationDelay: `${i * 30}ms` }}
-                                >
-                                  <div
-                                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-base"
-                                    style={{ background: "#FEF3EE" }}
-                                  >
-                                   {destinationIcons[dest.icon]}
-                                  </div>
-                                  <div className="min-w-0 flex-1">
-                                    <p className="text-[13px] font-semibold truncate" style={{ color: "#1C1917" }}>
-                                      {dest.name}
-                                    </p>
-                                    <p className="text-[11.5px] mt-0.5 truncate" style={{ color: "#A8A29E" }}>
-                                      {dest.subtitle}
-                                    </p>
-                                  </div>
-                                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                                    <path d="M5 3l4 4-4 4" stroke="#D4C9BF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                  </svg>
-                                </button>
-                              ))}
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
+
+                  {/* Dropdown moved outside the flex row for perfect accordion expansion */}
+                 {/* Dropdown moved outside the flex row for perfect accordion expansion */}
+                  {showDestDropdown && (
+                    <div
+                      className="sticky-dropdown premium-scrollbar relative sm:absolute left-0 right-0 sm:right-auto sm:top-[calc(100%+16px)] mt-3 sm:mt-0 overflow-y-auto overflow-x-hidden sm:rounded-2xl border-t sm:border border-[#F0EBE4] sm:border-[#EDE7DF] bg-[#fdf5f1] sm:bg-white/95 sm:backdrop-blur-xl w-full sm:w-[380px] shadow-none sm:shadow-[0_24px_48px_-12px_rgba(28,25,23,0.25),0_4px_16px_-4px_rgba(0,0,0,0.08)]"
+                      style={{ maxHeight: "min(60vh, 400px)" }}
+                      onMouseDown={(e) => e.preventDefault()}
+                    >
+                      <div className="px-1 sm:px-5 pt-4 pb-3 sm:border-b sm:border-[rgba(240,235,228,0.6)]">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.1em]" style={{ color: "#A8A29E" }}>
+                          Suggested for you
+                        </p>
+                        <p className="mt-1.5 text-sm font-semibold hidden sm:block" style={{ color: "#1C1917" }}>
+                          {destinationLabel}
+                        </p>
+                      </div>
+
+                      {/* FIX: sm:bg-transparent removes the orange box on web */}
+                      <div className="flex flex-col gap-2 bg-[#FFF4EC] sm:bg-transparent p-2 rounded-b-2xl sm:rounded-none">
+                        {locationsLoading ? (
+                          <div className="px-3 py-4 text-sm text-neutral-500">
+                            Loading locations...
+                          </div>
+                        ) : suggestedDestinations.length > 0 ? (
+                          suggestedDestinations
+                            .filter((d) =>
+                              searchLocation.trim() === "" ||
+                              d.name.toLowerCase().includes(searchLocation.toLowerCase())
+                            )
+                            .map((dest, i) => (
+                              <button
+                                key={dest.name}
+                                type="button"
+                                onClick={() => { setSearchLocation(dest.name); setShowDestDropdown(false); }}
+                                // FIX: sm:bg-transparent sm:shadow-none removes the clunky white cards on web
+                                className="dest-row flex w-full items-center bg-white sm:bg-transparent shadow-sm sm:shadow-none gap-3.5 rounded-xl px-2 sm:px-4 py-3.5 sm:py-2.5 text-left"
+                                style={{ animationDelay: `${i * 30}ms` }}
+                              >
+                                <div
+                                  className="flex h-10 w-10 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl text-base shadow-sm sm:shadow-none"
+                                  style={{ background: "#FEF3EE" }}
+                                >
+                                  {destinationIcons[dest.icon]}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-[13.5px] font-semibold truncate" style={{ color: "#1C1917" }}>
+                                    {dest.name}
+                                  </p>
+                                  <p className="text-[11.5px] mt-0.5 truncate" style={{ color: "#A8A29E" }}>
+                                    {dest.subtitle}
+                                  </p>
+                                </div>
+                              </button>
+                            ))
+                        ) : (
+                          <div className="px-3 py-4 text-sm text-neutral-500">
+                            No locations added yet
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* ── Stay Type ── */}
                 <div
-                  className="sticky-field relative min-w-0 flex-[1.5] cursor-pointer px-4 py-3 transition-colors duration-150"
-                  
-                  onMouseEnter={openTypeDropdown}
-  onMouseLeave={closeTypeDropdown}
-                  
+                  className={`sticky-field relative w-full bg-white sm:flex-[1.5] cursor-pointer px-4 py-3 transition-colors duration-150 ${
+                    showTypeDropdown ? "z-50 sticky-field-active" : "z-10"
+                  }`}
+                  onClick={toggleTypeDropdown}
                 >
                   <div className="flex items-center gap-2.5">
                     <span className="shrink-0" style={{ color: "#C4BAB4" }}>
@@ -355,7 +429,7 @@ export default function HavenHome() {
                           className="text-[13.5px] font-medium truncate"
                           style={{ color: stayType ? "#1C1917" : "#C4BAB4" }}
                         >
-                          {selectedType.label}
+                          {selectedType?.label || "Select stay type"}
                         </span>
                         <svg
                           width="12" height="12" viewBox="0 0 12 12" fill="none"
@@ -372,57 +446,72 @@ export default function HavenHome() {
                     </div>
                   </div>
 
-                  {/* Stay type dropdown */}
+                  {/* Premium Stay type accordion dropdown */}
+                 {/* Premium Stay type accordion dropdown */}
                   {showTypeDropdown && (
                     <div
-                      className="sticky-dropdown absolute left-0 top-[calc(100%+10px)] z-50 overflow-hidden rounded-2xl border bg-white"
+                      className="sticky-dropdown premium-scrollbar relative sm:absolute left-0 right-0 sm:right-auto sm:top-[calc(100%+16px)] mt-3 sm:mt-0 overflow-y-auto overflow-x-hidden sm:rounded-2xl border-t sm:border border-[#F0EBE4] sm:border-[#EDE7DF] bg-[#fdf5f1] sm:bg-white/95 sm:backdrop-blur-xl w-full sm:w-[280px] shadow-none sm:shadow-[0_24px_48px_-12px_rgba(28,25,23,0.25),0_4px_16px_-4px_rgba(0,0,0,0.08)]"
                       onMouseEnter={openTypeDropdown}
                       onMouseLeave={closeTypeDropdown}
-                      style={{
-                        width: "220px",
-                        borderColor: "#EDE7DF",
-                        boxShadow: "0 4px 6px -1px rgba(0,0,0,0.04), 0 20px 48px -8px rgba(28,25,23,0.18)",
-                      }}
+                      style={{ maxHeight: "min(60vh, 400px)" }}
                       onMouseDown={(e) => e.preventDefault()}
                     >
-                      <div className="border-b px-4 pt-3 pb-2" style={{ borderColor: "#F0EBE4" }}>
+                      {/* FIX: sm:bg-transparent removes mobile header styling on web */}
+                      <div className="bg-[#FDF7F2] sm:bg-transparent px-4 sm:px-5 pt-4 pb-3 sm:border-b sm:border-[rgba(240,235,228,0.6)]">
                         <p className="text-[10px] font-bold uppercase tracking-[0.1em]" style={{ color: "#A8A29E" }}>
                           Property type
                         </p>
                       </div>
-                      <div className="p-2">
-                        {STAY_TYPES.map((type, i) => (
-                          <button
-                            key={type.value}
-                            type="button"
-                            onClick={() => { setStayType(type.value); setShowTypeDropdown(false); }}
-                            className={`type-row flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left ${stayType === type.value ? "type-active" : ""}`}
-                            style={{ animationDelay: `${i * 25}ms` }}
-                          >
-                            <span className="text-base">{type.icon}</span>
-                            <span
-                              className="text-[13px] font-medium flex-1"
-                              style={{ color: stayType === type.value ? "#E07B54" : "#1C1917" }}
+                      
+                      {/* FIX: sm:bg-transparent removes the orange box on web */}
+                      <div className="flex flex-col gap-2 bg-[#FFF4EC] sm:bg-transparent p-2 rounded-b-2xl sm:rounded-none">
+                        {categoriesLoading ? (
+                          <div className="px-3 py-4 text-sm text-neutral-500">
+                            Loading categories...
+                          </div>
+                        ) : stayTypeOptions.length > 1 ? (
+                          stayTypeOptions.map((type, i) => (
+                            <button
+                              key={type.value}
+                              type="button"
+                              onClick={() => {
+                                setStayType(type.value);
+                                setShowDestDropdown(false);
+                                setTimeout(() => { setShowTypeDropdown(false); }, 0);
+                              }}
+                              // FIX: sm:bg-transparent sm:shadow-none removes the clunky white cards on web
+                              className={`type-row flex w-full bg-white sm:bg-transparent shadow-sm sm:shadow-none items-center gap-3.5 rounded-xl px-2 sm:px-4 py-3.5 sm:py-2.5 text-left ${stayType !== null && stayType === type.value ? "type-active" : ""}`}
+                              style={{ animationDelay: `${i * 25}ms` }}
                             >
-                              {type.label}
-                            </span>
-                            {stayType === type.value && (
-                              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                                <path d="M2.5 7l3 3 6-6" stroke="#E07B54" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                              </svg>
-                            )}
-                          </button>
-                        ))}
+                              <span className="text-lg sm:text-base">{type.icon}</span>
+                              <span
+                                className="text-[13.5px] font-medium flex-1"
+                                style={{ color: stayType === type.value ? "#E07B54" : "#1C1917" }}
+                              >
+                                {type.label}
+                              </span>
+                              {stayType === type.value && (
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                  <path d="M2.5 7l3 3 6-6" stroke="#E07B54" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                              )}
+                            </button>
+                          ))
+                        ) : (
+                          <div className="px-3 py-4 text-sm text-neutral-500">
+                            No categories added yet
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
                 </div>
 
                 {/* ── Actions ── */}
-                <div className="flex shrink-0 items-center gap-2 px-3">
+                <div className="flex w-full sm:w-auto items-center gap-2 px-6 sm:px-3.5 pb-3 sm:pb-0">
                   <button
                     onClick={handleStickySearch}
-                    className="sticky-search-btn flex items-center gap-2 rounded-xl px-5 py-2.5 text-[13px] font-bold text-white"
+                    className="sticky-search-btn flex flex-1 sm:w-auto items-center justify-center gap-2 rounded-xl px-4 sm:px-5 py-2.5 text-[13px] font-bold text-white"
                   >
                     <SearchIcon />
                     <span className="hidden sm:inline">Search</span>
@@ -470,10 +559,12 @@ export default function HavenHome() {
         onSearchFocus={handleSearchFocus}
         
       />
-      <FilterBar
-  filters={filters}
-  setFilters={setFilters}
-/>
+      {!showStickySearch && (
+  <FilterBar
+    filters={filters}
+    setFilters={setFilters}
+  />
+)}
 
 <HomeSections filters={filters} />
       <HavenLowerSections />

@@ -1,16 +1,18 @@
 "use client";
 
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { ArrowRightIcon } from "@/components/havenIcons";
-import { destinationCards, marqueeItems, processSteps, stats } from "@/components/homeData";
+import { marqueeItems, processSteps, stats } from "@/components/homeData";
 import { useCounter, useInView } from "@/components/havenHooks";
+import { PROPERTY_LOCATION_COLLECTION } from "@/lib/propertyTaxonomy";
+import { usePropertyTaxonomy } from "@/hooks/usePropertyTaxonomy";
 
-type Destination = (typeof destinationCards)[number];
 type ProcessStep = (typeof processSteps)[number];
 
 function StatCard({ value, suffix, label, index }: { value: number; suffix: string; label: string; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref);
+  const inView = useInView(ref as import("react").RefObject<HTMLElement>);
   const count = useCounter(value, inView);
 
   return (
@@ -32,12 +34,29 @@ function StatCard({ value, suffix, label, index }: { value: number; suffix: stri
   );
 }
 
-function DestinationCard({ destination, index }: { destination: Destination; index: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref);
+function DestinationCard({
+  destination,
+  index,
+  onClick,
+}: {
+  destination: {
+    name: string;
+    sub: string;
+    image: string;
+  };
+  index: number;
+  onClick: () => void;
+}) {
+  const ref = useRef<HTMLButtonElement>(null);
+  const inView = useInView(ref as unknown as import("react").RefObject<HTMLElement>);
 
   return (
-    <div className="relative aspect-[3/4] overflow-hidden rounded-[18px] group">
+    <button
+      ref={ref}
+      type="button"
+      onClick={onClick}
+      className="relative w-[220px] md:w-[260px] shrink-0 aspect-[4/5] overflow-hidden rounded-[18px] group text-left"
+    >
   
   <img
     src={destination.image}
@@ -46,17 +65,27 @@ function DestinationCard({ destination, index }: { destination: Destination; ind
   />
 
   {/* overlay */}
-  <div className="absolute inset-0 bg-black/40" />
+  {/* Base overlay */}
+<div className="absolute inset-0 bg-black/35" />
 
-  <div className="absolute bottom-4 left-4">
-    <div className="text-white font-semibold text-[15px]">
-      {destination.name}
-    </div>
-    <div className="text-white/70 text-[11px]">
-      {destination.sub}
-    </div>
+{/* Hover overlay */}
+<div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+<div className="absolute bottom-4 left-4 z-10">
+  <div className="text-white font-semibold text-[15px]">
+    {destination.name}
+  </div>
+  <div className="text-white/70 text-[11px]">
+    {destination.sub}
   </div>
 </div>
+
+<div className="absolute bottom-4 right-4 z-10 translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+  <span className="rounded-full bg-white px-4 py-2 text-xs font-semibold text-black">
+    Explore
+  </span>
+</div>
+    </button>
   );
 }
 
@@ -85,11 +114,35 @@ function ProcessStepCard({ step, index }: { step: ProcessStep; index: number }) 
 }
 
 export default function HavenLowerSections() {
+  const router = useRouter();
+  const { items: locations, loading: locationsLoading } = usePropertyTaxonomy(PROPERTY_LOCATION_COLLECTION);
   const titleRef = useRef<HTMLDivElement>(null);
   const titleInView = useInView(titleRef);
 
+  const destinationCards = useMemo(
+    () =>
+      locations.map((location, index) => {
+        const [primary, secondary] = location.name.split(/,\s*/);
+        const fallbackImages = [
+          "https://images.unsplash.com/photo-1587474260584-136574528ed5",
+          "https://images.unsplash.com/photo-1512453979798-5ea266f8880c",
+          "https://images.unsplash.com/photo-1600532761550-1c3a6d4e4c0b",
+          "https://images.unsplash.com/photo-1627894483216-2138af692e32",
+        ];
+
+        return {
+          name: primary || location.name,
+          sub: secondary || "Browse stays",
+          image: fallbackImages[index % fallbackImages.length],
+          locationName: location.name,
+        };
+      }),
+    [locations]
+  );
+
   return (
     <>
+    
       <div className="overflow-hidden border-y border-[#EDE8E2] bg-white py-4">
         <div className="marquee flex whitespace-nowrap">
           {[...marqueeItems, ...marqueeItems, ...marqueeItems].map((item, index) => (
@@ -105,74 +158,52 @@ export default function HavenLowerSections() {
         <div ref={titleRef} className="mb-9 flex flex-wrap items-end justify-between gap-4" style={{ opacity: titleInView ? 1 : 0, transform: titleInView ? "translateY(0)" : "translateY(22px)", transition: "all .55s ease" }}>
           <div>
             <div className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.15em] text-[#E07B54]">Inspiration</div>
-            <h2 className="font-display text-[clamp(1.7rem,3.5vw,2.7rem)] font-bold leading-[1.15] tracking-[-0.02em] text-[#1C1917]">
-              Where do you
-              <br />
-              <em className="text-[#E07B54]">want to go?</em>
-            </h2>
+           <h2 className="font-display text-[clamp(2rem,4vw,3.4rem)] font-bold leading-[1.05] tracking-[-0.03em] text-[#1C1917]">
+  Explore stays
+  <br />
+  <span className="text-[#E07B54]">by destination</span>
+</h2>
+<p className="mt-4 max-w-md text-[15px] leading-[1.8] text-[#78716C]">
+  Discover premium stays curated for comfort, privacy and unforgettable experiences.
+</p>
           </div>
 
-          <button className="btn-outline inline-flex items-center gap-2 rounded-[32px] border-[1.5px] border-[#1C1917] bg-white px-6 py-[11px] text-[13px] font-bold text-[#1C1917] transition-all hover:bg-[#1C1917] hover:text-[#FAF8F5]">
+          <button
+  onClick={() => router.push("/search")}
+  className="btn-outline inline-flex items-center gap-2 rounded-[32px] border-[1.5px] border-[#1C1917] bg-white px-6 py-[11px] text-[13px] font-bold text-[#1C1917] transition-all hover:bg-[#1C1917] hover:text-[#FAF8F5]"
+>
             Explore all
             <ArrowRightIcon />
           </button>
         </div>
 
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,160px),1fr))] gap-3.5">
-          {destinationCards.map((destination, index) => (
-            <DestinationCard key={destination.name} destination={destination} index={index} />
-          ))}
+        <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide">
+          {locationsLoading ? (
+            <div className="col-span-full rounded-[18px] border border-dashed border-[#EDE8E2] bg-white px-5 py-10 text-center text-sm text-[#A8A29E]">
+              Loading locations...
+            </div>
+          ) : destinationCards.length > 0 ? (
+            destinationCards.map((destination, index) => (
+              <DestinationCard
+                key={destination.locationName}
+                destination={destination}
+                index={index}
+                onClick={() => router.push(`/search?location=${encodeURIComponent(destination.locationName)}`)}
+              />
+            ))
+          ) : (
+            <div className="col-span-full rounded-[18px] border border-dashed border-[#EDE8E2] bg-white px-5 py-10 text-center text-sm text-[#A8A29E]">
+              Add locations in admin settings to show them here.
+            </div>
+          )}
         </div>
       </section>
 
-      <section className="border-y border-[#EDE8E2] bg-white px-[clamp(20px,5vw,56px)] py-16">
-        <div className="mx-auto grid max-w-[840px] grid-cols-2 gap-8 md:grid-cols-4">
-          {stats.map((stat, index) => (
-            <StatCard key={stat.label} value={stat.value} suffix={stat.suffix} label={stat.label} index={index} />
-          ))}
-        </div>
-      </section>
+      
 
-      <section className="mx-auto w-full max-w-[1760px] px-[clamp(20px,5vw,56px)] py-20">
-        <div className="mb-12 text-center">
-          <div className="mb-3 text-[11px] font-bold uppercase tracking-[0.15em] text-[#E07B54]">Simple process</div>
-          <h2 className="font-display text-[clamp(1.7rem,3.5vw,2.7rem)] font-bold leading-[1.15] tracking-[-0.02em] text-[#1C1917]">
-            Book in <em className="text-[#E07B54]">three steps</em>
-          </h2>
-        </div>
+     
 
-        <div className="mx-auto grid max-w-[860px] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-5">
-          {processSteps.map((step, index) => (
-            <ProcessStepCard key={step.number} step={step} index={index} />
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto w-full max-w-[1760px] px-[clamp(20px,5vw,56px)] pb-[88px]">
-        <div className="grid items-center gap-10 rounded-[28px] bg-[#1C1917] p-[clamp(40px,6vw,68px)] md:grid-cols-[1fr_auto]">
-          <div>
-            <div className="mb-3.5 text-[11px] font-bold uppercase tracking-[0.15em] text-[#E07B54]">For hosts</div>
-            <h2 className="font-display mb-3.5 text-[clamp(1.6rem,3vw,2.4rem)] font-bold leading-[1.15] tracking-[-0.02em] text-[#FAF8F5]">
-              Your space could be
-              <br />
-              <em className="text-[#E07B54]">someone's favourite stay.</em>
-            </h2>
-            <p className="max-w-[380px] text-sm font-normal leading-[1.75] text-[#78716C]">
-              Join 800,000+ hosts earning with Haven. List your home in under 10 minutes.
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-2.5">
-            <button className="btn-primary inline-flex items-center gap-2 whitespace-nowrap rounded-[32px] bg-[#E07B54] px-8 py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#C96840]">
-              Start hosting
-              <ArrowRightIcon />
-            </button>
-            <button className="pill rounded-[32px] border border-white/15 bg-transparent px-6 py-3 text-[13px] font-medium text-[#78716C] transition-colors hover:bg-white/10">
-              Learn more
-            </button>
-          </div>
-        </div>
-      </section>
+      
     </>
   );
 }

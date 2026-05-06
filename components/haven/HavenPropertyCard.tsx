@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback, memo } from "react";
+import { useRef, useState, useCallback, memo, useEffect } from "react";
 import { HeartIcon, MapPinIcon, StarIcon } from "@/components/havenIcons";
 import { type HomeProperty } from "@/components/homeData";
 import { useInView } from "@/components/havenHooks";
@@ -218,6 +218,7 @@ const ImagePanelFull = memo(function ImagePanelFull({
   location,
   rating,
   hovered,
+  compact,
   onToggleLike,
 }: {
   image: string;
@@ -227,6 +228,7 @@ const ImagePanelFull = memo(function ImagePanelFull({
   location: string;
   rating: number;
   hovered: boolean;
+  compact: boolean;
   onToggleLike: (e: React.MouseEvent) => void;
 }) {
   return (
@@ -234,9 +236,9 @@ const ImagePanelFull = memo(function ImagePanelFull({
       style={{
         position: "relative",
         width: "100%",
-        paddingBottom: "88%",
+        paddingBottom: compact ? "84%" : "88%",
         overflow: "hidden",
-        borderRadius: "18px",
+        borderRadius: compact ? "14px" : "18px",
         flexShrink: 0,
       }}
     >
@@ -269,16 +271,16 @@ const ImagePanelFull = memo(function ImagePanelFull({
         <span
           style={{
             position: "absolute",
-            top: 12,
-            left: 12,
+            top: compact ? 8 : 12,
+            left: compact ? 8 : 12,
             background: "rgba(255,255,255,0.94)",
             backdropFilter: "blur(8px)",
             color: "#3a3020",
-            fontSize: 10.5,
+            fontSize: compact ? 9.5 : 10.5,
             fontWeight: 700,
             letterSpacing: "0.06em",
             textTransform: "uppercase",
-            padding: "4px 10px",
+            padding: compact ? "3px 8px" : "4px 10px",
             borderRadius: 99,
           }}
         >
@@ -292,10 +294,10 @@ const ImagePanelFull = memo(function ImagePanelFull({
         aria-label={liked ? "Remove from wishlist" : "Save to wishlist"}
         style={{
           position: "absolute",
-          top: 12,
-          right: 12,
-          width: 34,
-          height: 34,
+          top: compact ? 8 : 12,
+          right: compact ? 8 : 12,
+          width: compact ? 30 : 34,
+          height: compact ? 30 : 34,
           borderRadius: "50%",
           background: liked ? "rgba(224,123,84,0.95)" : "rgba(255,255,255,0.88)",
           backdropFilter: "blur(8px)",
@@ -345,7 +347,18 @@ function HavenPropertyCard({ property, index }: HavenPropertyCardProps) {
   const inView = useInView(ref);
   const [liked, setLiked] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 639px)");
+    const update = () => setIsMobile(mediaQuery.matches);
+
+    update();
+    mediaQuery.addEventListener("change", update);
+
+    return () => mediaQuery.removeEventListener("change", update);
+  }, []);
 
   const toggleLike = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -400,13 +413,14 @@ overflow: "visible",
           location={property.location}
           rating={property.rating}
           hovered={hovered}
+          compact={isMobile}
           onToggleLike={toggleLike}
         />
 
         {/* ── Body ── */}
         <div
           style={{
-            padding: "14px 10px 10px",
+            padding: isMobile ? "10px 8px 8px" : "14px 10px 10px",
             display: "flex",
             flexDirection: "column",
             gap: 0,
@@ -417,13 +431,13 @@ overflow: "visible",
           <h3
             style={{
               margin: 0,
-              fontSize: 15.5,
+              fontSize: isMobile ? 13.5 : 15.5,
               fontWeight: 600,
               color: "#1A1410",
               letterSpacing: "-0.025em",
-              lineHeight: 1.3,
+              lineHeight: isMobile ? 1.2 : 1.3,
               display: "-webkit-box",
-              WebkitLineClamp: 2,
+              WebkitLineClamp: isMobile ? 1 : 2,
               WebkitBoxOrient: "vertical",
               overflow: "hidden",
             }}
@@ -431,10 +445,33 @@ overflow: "visible",
             {property.title}
           </h3>
 
+          {property.category && (
+            <div
+              style={{
+                marginTop: isMobile ? 6 : 8,
+                display: "inline-flex",
+                width: "fit-content",
+                alignItems: "center",
+                borderRadius: 999,
+                border: "1px solid rgba(224,123,84,0.18)",
+                background: "rgba(224,123,84,0.08)",
+                color: "#B85A30",
+                padding: isMobile ? "4px 8px" : "5px 10px",
+                fontSize: isMobile ? 10 : 11,
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                lineHeight: 1,
+              }}
+            >
+              {property.category}
+            </div>
+          )}
+
           {/* Location */}
           <div
             style={{
-              marginTop: 7,
+              marginTop: isMobile ? 6 : 8,
               display: "flex",
               alignItems: "center",
               gap: 4,
@@ -445,7 +482,7 @@ overflow: "visible",
             />
             <span
               style={{
-                fontSize: 12.5,
+                fontSize: isMobile ? 11.5 : 12.5,
                 color: "#7A6E65",
                 fontWeight: 500,
                 overflow: "hidden",
@@ -461,10 +498,11 @@ overflow: "visible",
           {property.nights && (
             <p
               style={{
-                margin: "5px 0 0",
-                fontSize: 11.5,
+                margin: isMobile ? "4px 0 0" : "5px 0 0",
+                fontSize: isMobile ? 10.5 : 11.5,
                 color: "#B0A89E",
                 fontWeight: 400,
+                display: isMobile ? "none" : "block",
               }}
             >
               {property.nights}
@@ -474,20 +512,29 @@ overflow: "visible",
           {/* ── Divider ── */}
           <div
             style={{
-              marginTop: 14,
+              marginTop: isMobile ? 10 : 14,
               borderTop: "1px solid rgba(200,188,174,0.4)",
-              paddingTop: 14,
+              paddingTop: isMobile ? 10 : 14,
               display: "flex",
-              alignItems: "center",
               justifyContent: "space-between",
               gap: 8,
+              flexDirection: isMobile ? "column" : "row",
+              alignItems: isMobile ? "stretch" : "center",
             }}
           >
             {/* Price */}
-            <div style={{ display: "flex", alignItems: "baseline", gap: 3 }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "baseline",
+                gap: 3,
+                justifyContent: isMobile ? "space-between" : "flex-start",
+                width: isMobile ? "100%" : "auto",
+              }}
+            >
               <span
                 style={{
-                  fontSize: 18,
+                  fontSize: isMobile ? 14.5 : 18,
                   fontWeight: 700,
                   color: "#1A1410",
                   letterSpacing: "-0.03em",
@@ -498,7 +545,7 @@ overflow: "visible",
               </span>
               <span
                 style={{
-                  fontSize: 11.5,
+                  fontSize: isMobile ? 10.5 : 11.5,
                   color: "#A89E94",
                   fontWeight: 900,
                 }}
@@ -515,12 +562,12 @@ overflow: "visible",
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 5,
-                padding: "8px 14px",
+                padding: isMobile ? "7px 10px" : "8px 14px",
                 background: hovered
                   ? "#C76644"
                   : "#E07B54",
                 color: "#fff",
-                fontSize: 12.5,
+                fontSize: isMobile ? 11.25 : 12.5,
                 fontWeight: 600,
                 letterSpacing: "0.01em",
                 borderRadius: 10,
@@ -528,6 +575,9 @@ overflow: "visible",
                 transition: "background .2s ease, gap .2s cubic-bezier(.34,1.56,.64,1)",
                 whiteSpace: "nowrap",
                 flexShrink: 0,
+                width: isMobile ? "100%" : "auto",
+                justifyContent: "center",
+                marginTop: isMobile ? 8 : 0,
               }}
             >
               View stay
