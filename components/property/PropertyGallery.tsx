@@ -12,8 +12,8 @@ export default function PropertyGallery({ images }: { images: string[] }) {
   }
 
   return (
-    <div className="relative mb-12 group">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 h-[400px] md:h-[500px] rounded-2xl overflow-hidden">
+    <div className="relative mb-8 sm:mb-12 group">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 h-[280px] sm:h-[360px] md:h-[500px] rounded-[20px] sm:rounded-2xl overflow-hidden">
         
         {/* Main Feature Image */}
         <div className="md:col-span-2 relative h-full overflow-hidden bg-zinc-100">
@@ -52,7 +52,7 @@ export default function PropertyGallery({ images }: { images: string[] }) {
       </div>
 
       {/* Modern Floating Button */}
-      <button className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-md hover:bg-white text-zinc-900 px-5 py-2.5 rounded-full text-sm font-medium shadow-lg flex items-center gap-2 transition-all hover:scale-105 active:scale-95">
+        <button className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 bg-white/90 backdrop-blur-md hover:bg-white text-zinc-900 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium shadow-lg flex items-center gap-2 transition-all hover:scale-105 active:scale-95">
         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
         </svg>

@@ -52,9 +52,9 @@ export default function PropertyInfo({ property }: { property: Property }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8 sm:space-y-10">
       {/* Highlights / Features */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-8 border-b border-neutral-100">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 pb-6 sm:pb-8 border-b border-neutral-100">
         {[
           {
             icon: (
@@ -85,12 +85,10 @@ export default function PropertyInfo({ property }: { property: Property }) {
             desc: "Secure digital access.",
           },
         ].map((h, i) => (
-          <div key={i} className="flex gap-4 items-start">
-            <span className="text-zinc-900 mt-0.5">{h.icon}</span>
-            <div>
-              <h3 className="font-semibold text-sm text-neutral-900 mb-1">{h.title}</h3>
-              <p className="text-sm text-neutral-500">{h.desc}</p>
-            </div>
+          <div key={i} className="flex flex-col items-center text-center rounded-2xl border border-neutral-100 bg-neutral-50/70 px-4 py-4 sm:px-5 sm:py-5">
+            <span className="mb-3 text-zinc-900">{h.icon}</span>
+            <h3 className="font-semibold text-sm text-neutral-900 mb-1">{h.title}</h3>
+            <p className="text-sm text-neutral-500 leading-relaxed">{h.desc}</p>
           </div>
         ))}
       </div>
@@ -98,10 +96,10 @@ export default function PropertyInfo({ property }: { property: Property }) {
       {/* ── HOTEL INFORMATION ── */}
       <section>
         {/* Section heading + badge */}
-        <div className="flex items-center gap-3 mb-6">
-          <h2 className="text-2xl font-bold tracking-tight text-neutral-900">Hotel Information</h2>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-5 sm:mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900">Hotel Information</h2>
           <span
-            className="text-[11px] font-semibold tracking-wide px-3 py-1 rounded-full"
+            className="text-[10px] sm:text-[11px] font-semibold tracking-wide px-2.5 sm:px-3 py-1 rounded-full"
             style={{ background: "#FAECE7", color: "#993C1D" }}
           >
             Open now
@@ -109,13 +107,13 @@ export default function PropertyInfo({ property }: { property: Property }) {
         </div>
 
         {/* Main card wrapper */}
-        <div className="rounded-2xl overflow-hidden border border-[#E07B54]">
+        <div className="rounded-[22px] sm:rounded-2xl overflow-hidden border border-[#E07B54] bg-white shadow-[0_30px_90px_rgba(17,24,39,0.14),0_12px_30px_rgba(224,123,84,0.12),0_2px_8px_rgba(17,24,39,0.08)]">
 
           {/* Two-column grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-neutral-200">
 
             {/* ── Contact ── */}
-            <div className="bg-white p-6">
+            <div className="bg-white p-5 sm:p-6">
               <p
                 className="text-[11px] font-semibold tracking-widest uppercase mb-3"
                 style={{ color: "#D85A30" }}
@@ -179,9 +177,9 @@ export default function PropertyInfo({ property }: { property: Property }) {
             </div>
 
             {/* ── Check-in / Check-out ── */}
-            <div className="bg-white p-6">
+            <div className="bg-white p-5 sm:p-6">
               <p
-                className="text-[11px] font-semibold tracking-widest uppercase mb-5"
+                className="text-[11px] font-semibold tracking-widest uppercase mb-4 sm:mb-5"
                 style={{ color: "#D85A30" }}
               >
                 Check-in &amp; Check-out
@@ -195,17 +193,18 @@ export default function PropertyInfo({ property }: { property: Property }) {
               ].map((row, i, arr) => (
                 <div
                   key={i}
-                  className={`flex justify-between items-center py-3 ${
+                  className={`flex flex-wrap items-center gap-x-2 gap-y-1 py-3 ${
                     i < arr.length - 1 ? "border-b border-neutral-100" : ""
                   }`}
                 >
                   <span className="text-sm text-neutral-500">{row.label}</span>
-                  <span className="text-sm font-semibold text-neutral-900">{row.value}</span>
+                  <span className="text-sm text-neutral-300" aria-hidden="true">-</span>
+                  <span className="text-sm font-semibold text-neutral-900 text-right">{row.value}</span>
                 </div>
               ))}
 
               {/* ID notice */}
-              <div className="mt-5 flex items-start gap-2.5 rounded-xl bg-neutral-50 border border-neutral-100 px-4 py-2">
+              <div className="mt-4 sm:mt-5 flex items-start gap-2.5 rounded-xl bg-neutral-50 border border-neutral-100 px-4 py-2.5">
                 <svg
                   className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-neutral-600"
                   fill="none"
@@ -231,7 +230,7 @@ export default function PropertyInfo({ property }: { property: Property }) {
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
             </svg>
-            <p className="text-xs text-neutral-600">
+            <p className="text-xs text-neutral-600 leading-relaxed">
               Verified property — identity and licensing confirmed by our trust team.
             </p>
           </div>
@@ -239,8 +238,8 @@ export default function PropertyInfo({ property }: { property: Property }) {
       </section>
 
       {/* Description */}
-      <div className="pb-8 border-b border-neutral-100">
-        <h2 className="text-2xl font-bold tracking-tight text-neutral-900 mb-4">About this space</h2>
+      <div className="pb-7 sm:pb-8 border-b border-neutral-100">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 mb-3 sm:mb-4">About this space</h2>
         <div className={`relative ${!expanded && "max-h-32 overflow-hidden"}`}>
           <p className="text-neutral-600 leading-relaxed text-sm whitespace-pre-line">
             {property.description}
@@ -267,8 +266,8 @@ export default function PropertyInfo({ property }: { property: Property }) {
 
       {/* Amenities List */}
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-neutral-900 mb-6">Amenities</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 mb-5 sm:mb-6">Amenities</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 sm:gap-y-4 gap-x-8">
           {AMENITIES.map((a, i) => (
             <div key={i} className="flex items-center gap-3 text-neutral-700">
               <span className="text-neutral-600">{a.icon}</span>
@@ -276,7 +275,7 @@ export default function PropertyInfo({ property }: { property: Property }) {
             </div>
           ))}
         </div>
-        <button className="mt-8 px-6 py-3 border border-neutral-200 rounded-xl text-sm font-medium text-neutral-900 hover:border-neutral-900 transition-colors">
+        <button className="mt-6 sm:mt-8 w-full sm:w-auto px-6 py-3 border border-neutral-200 rounded-xl text-sm font-medium text-neutral-900 hover:border-neutral-900 transition-colors">
           View all amenities
         </button>
       </div>

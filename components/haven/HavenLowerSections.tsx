@@ -154,8 +154,8 @@ export default function HavenLowerSections() {
         </div>
       </div>
 
-      <section className="mx-auto w-full max-w-[1760px] px-[clamp(20px,5vw,56px)] py-20">
-        <div ref={titleRef} className="mb-9 flex flex-wrap items-end justify-between gap-4" style={{ opacity: titleInView ? 1 : 0, transform: titleInView ? "translateY(0)" : "translateY(22px)", transition: "all .55s ease" }}>
+      <section className="mx-auto w-full max-w-[1760px] px-[clamp(20px,5vw,56px)] pt-16 pb-12 sm:py-16">
+        <div ref={titleRef} className="mb-8 flex flex-wrap items-end justify-between gap-4 sm:mb-9" style={{ opacity: titleInView ? 1 : 0, transform: titleInView ? "translateY(0)" : "translateY(22px)", transition: "all .55s ease" }}>
           <div>
             <div className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.15em] text-[#E07B54]">Inspiration</div>
            <h2 className="font-display text-[clamp(2rem,4vw,3.4rem)] font-bold leading-[1.05] tracking-[-0.03em] text-[#1C1917]">

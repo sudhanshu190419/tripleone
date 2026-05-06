@@ -156,7 +156,6 @@ const STYLES = `
 
   .fb-chip-wrap {
     flex-shrink: 0;
-    animation: fb-chip-in 0.35s var(--fb-ease-spring) both;
     scroll-snap-align: start;
   }
 
@@ -289,7 +288,6 @@ const STYLES = `
     background: transparent; font-size: 13px; color: #8C8480; cursor: pointer;
     transition: border-color .15s, color .15s; font-family: inherit;
     display: flex; align-items: center; gap: 5px;
-    animation: fb-chip-in 0.25s var(--fb-ease-spring) both;
   }
   .fb-clear-all:hover { border-color: #C5BFB8; color: #4A4540; }
 
@@ -450,18 +448,6 @@ const STYLES = `
     .fb-chip { font-size: 13px; padding: 8px 13px; }
   }
 `;
-
-// ─── StyleInjector ────────────────────────────────────────────────────────────
-
-let stylesInjected = false;
-function injectStyles() {
-  if (stylesInjected || typeof document === "undefined") return;
-  const el = document.createElement("style");
-  el.dataset.fbStyles = "1";
-  el.textContent = STYLES;
-  document.head.appendChild(el);
-  stylesInjected = true;
-}
 
 // ─── Desktop FilterChip ───────────────────────────────────────────────────────
 
@@ -776,8 +762,6 @@ type FilterBarProps = {
 };
 
 export default function FilterBar({ filters, setFilters, onOpenAllFilters }: FilterBarProps) {
-  useEffect(() => { injectStyles(); }, []);
-
   const { items: locations, loading: locationsLoading } = usePropertyTaxonomy(PROPERTY_LOCATION_COLLECTION);
   const { items: categories, loading: categoriesLoading } = usePropertyTaxonomy(PROPERTY_CATEGORY_COLLECTION);
 
@@ -838,6 +822,7 @@ export default function FilterBar({ filters, setFilters, onOpenAllFilters }: Fil
 
   return (
     <>
+      <style>{STYLES}</style>
       <nav className="fb-bar" aria-label="Property filters">
         <div className="fb-inner">
 

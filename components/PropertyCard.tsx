@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { useCallback } from "react";
+import { Share2 } from "lucide-react";
 
 export type Property = {
 	id: string;
@@ -16,6 +18,31 @@ type PropertyCardProps = {
 };
 
 export default function PropertyCard({ property, priority = false }: PropertyCardProps) {
+	const handleShare = useCallback(async (e: React.MouseEvent) => {
+		e.stopPropagation();
+
+		const shareUrl = window.location.href;
+
+		try {
+			if (navigator.share) {
+				await navigator.share({
+					title: property.title,
+					text: `${property.title} in ${property.location}`,
+					url: shareUrl,
+				});
+				return;
+			}
+
+			await navigator.clipboard.writeText(shareUrl);
+		} catch {
+			try {
+				await navigator.clipboard.writeText(shareUrl);
+			} catch {
+				window.prompt("Copy this stay link", shareUrl);
+			}
+		}
+	}, [property.location, property.title]);
+
 	return (
 		<article className="group reveal-up space-y-3" style={{ animationDelay: "120ms" }}>
 			<div className="relative aspect-[4/3] overflow-hidden rounded-[18px]">
@@ -40,6 +67,14 @@ export default function PropertyCard({ property, priority = false }: PropertyCar
 							strokeWidth="2"
 						/>
 					</svg>
+				</button>
+				<button
+					type="button"
+					onClick={handleShare}
+					className="absolute left-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/72 text-[#222222] backdrop-blur-sm transition-transform duration-200 hover:scale-105 active:scale-95"
+					aria-label={`Share ${property.title}`}
+				>
+					<Share2 className="h-4 w-4" aria-hidden="true" />
 				</button>
 			</div>
 

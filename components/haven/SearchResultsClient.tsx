@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import FilterBar, { FilterValues } from "@/components/haven/FilterBar";
 import HavenPropertyCard from "@/components/haven/HavenPropertyCard";
 import type { HomeProperty } from "@/components/homeData";
+import Image from "next/image";
 
 type Property = HomeProperty;
 
@@ -167,13 +168,15 @@ const sortFn =
         {/* Hero*/}
         <section className="relative h-[38vh] min-h-[320px] w-full overflow-hidden sm:h-[46vh] sm:min-h-[420px] lg:h-[58vh] lg:max-h-[560px]">
           {/* Image */}
-          <img
-            key={heroImage}
-            src={heroImage}
-            alt={`${locationLabel} landscape`}
-            className="haven-hero-img absolute inset-0 h-full w-full object-cover"
-            loading="eager"
-          />
+          <Image
+  key={heroImage}
+  src={heroImage}
+  alt={`${locationLabel} landscape`}
+  fill
+  priority
+  className="haven-hero-img object-cover"
+  sizes="100vw"
+/>
 
           {/* Gradient overlays for legibility */}
           <div
@@ -271,36 +274,29 @@ const sortFn =
 
           {/*  Results  */}
           <main
-            className="mt-10 sm:mt-12"
-            style={{
-              opacity: isFiltering ? 0.5 : 1,
-              transition: "opacity 200ms ease",
-            }}
-          >
+  className="mt-10 sm:mt-12 min-h-[600px]" // Reserve space for at least two rows of cards
+  style={{
+    opacity: isFiltering ? 0.5 : 1,
+    transition: "opacity 200ms ease",
+  }}
+>
             {resultCount > 0 ? (
-              <div
+  <div
   key={`grid-${JSON.stringify(filters)}`}
   className="
-    flex gap-4 overflow-x-auto overflow-y-hidden
-  snap-x snap-mandatory
-  touch-pan-x
-  items-stretch
-  pb-2
-  scrollbar-none
-  sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible
-  lg:grid-cols-3
-  xl:grid-cols-4
+    flex gap-4 overflow-x-auto 
+    snap-x snap-mandatory touch-pan-x items-stretch
+    /* FIX: Massive bottom padding for the shadow, offset by negative margin */
+    pb-[100px] -mb-[80px] pt-4 -mt-4
+    scrollbar-none
+    sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible
+    lg:grid-cols-3 xl:grid-cols-4
   "
 >
                 {filteredProperties.map((property, index) => (
                   <div
                     key={property.id}
-                    className="haven-card
-  min-w-[88%]
-  flex-shrink-0
-  snap-start
-  self-stretch
-  sm:min-w-0"
+                    className="min-w-[88%] flex-shrink-0 snap-start self-stretch sm:min-w-0"
                     style={{ animationDelay: `${Math.min(index * 45, 400)}ms` }}
                   >
                     <HavenPropertyCard property={property} index={index} />

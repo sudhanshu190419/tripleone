@@ -20,7 +20,7 @@ const reels = [
 
 export default function InstagramSection() {
   return (
-    <section className="py-20">
+    <section className="pt-0 pb-14 sm:pt-10 sm:pb-16">
       <div className="max-w-7xl mx-auto px-6">
         
 

@@ -1,12 +1,13 @@
 "use client";
 
 import { useRef, useState, useCallback, memo, useEffect } from "react";
-import { HeartIcon, MapPinIcon, StarIcon } from "@/components/havenIcons";
+import { MapPinIcon, StarIcon } from "@/components/havenIcons";
 import { type HomeProperty } from "@/components/homeData";
 import { useInView } from "@/components/havenHooks";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Share2 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -18,29 +19,27 @@ type HavenPropertyCardProps = {
 // ─── Shadows ──────────────────────────────────────────────────────────────────
 
 const SHADOW_REST =
-  "0 1px 2px rgba(28,20,12,0.04), 0 4px 12px rgba(28,20,12,0.06), 0 12px 32px rgba(28,20,12,0.05)";
+  "0 10px 24px rgba(28,20,12,0.08)";
 
 const SHADOW_HOVER =
-  "0 2px 4px rgba(28,20,12,0.06), 0 12px 32px rgba(28,20,12,0.14), 0 32px 64px rgba(28,20,12,0.10)";
+  "0 16px 36px rgba(28,20,12,0.12)";
 
 // ─── ImagePanel ───────────────────────────────────────────────────────────────
 
 const ImagePanel = memo(function ImagePanel({
   image,
   tag,
-  liked,
   title,
   location,
   hovered,
-  onToggleLike,
+  onShare,
 }: {
   image: string;
   tag?: string;
-  liked: boolean;
   title: string;
   location: string;
   hovered: boolean;
-  onToggleLike: (e: React.MouseEvent) => void;
+  onShare: (e: React.MouseEvent) => void;
 }) {
   return (
     <div
@@ -100,10 +99,9 @@ const ImagePanel = memo(function ImagePanel({
         </span>
       )}
 
-      {/* Like button */}
       <button
-        onClick={onToggleLike}
-        aria-label={liked ? "Remove from wishlist" : "Save to wishlist"}
+        onClick={onShare}
+        aria-label={`Share ${title}`}
         style={{
           position: "absolute",
           top: 12,
@@ -111,7 +109,7 @@ const ImagePanel = memo(function ImagePanel({
           width: 34,
           height: 34,
           borderRadius: "50%",
-          background: liked ? "rgba(224,123,84,0.92)" : "rgba(255,255,255,0.88)",
+          background: "rgba(255,255,255,0.88)",
           backdropFilter: "blur(8px)",
           border: "1px solid rgba(255,255,255,0.5)",
           display: "flex",
@@ -119,26 +117,16 @@ const ImagePanel = memo(function ImagePanel({
           justifyContent: "center",
           cursor: "pointer",
           transition: "background .2s, transform .2s cubic-bezier(.34,1.56,.64,1)",
-          transform: liked ? "scale(1.12)" : "scale(1)",
+          zIndex: 2,
         }}
         onMouseEnter={(e) => {
-          if (!liked)
-            (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.98)";
+          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.98)";
         }}
         onMouseLeave={(e) => {
-          if (!liked)
-            (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.88)";
+          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.88)";
         }}
       >
-        <HeartIcon
-          style={{
-            color: liked ? "#fff" : "#9b8f83",
-            fill: liked ? "#fff" : "none",
-            width: 15,
-            height: 15,
-            transition: "color .2s, fill .2s",
-          }}
-        />
+        <Share2 style={{ width: 14, height: 14, color: "#6f6257" }} />
       </button>
 
       {/* Rating badge — lives on image for premium feel */}
@@ -213,23 +201,21 @@ const RatingBadge = memo(function RatingBadge({ rating }: { rating: number }) {
 const ImagePanelFull = memo(function ImagePanelFull({
   image,
   tag,
-  liked,
   title,
   location,
   rating,
   hovered,
   compact,
-  onToggleLike,
+  onShare,
 }: {
   image: string;
   tag?: string;
-  liked: boolean;
   title: string;
   location: string;
   rating: number;
   hovered: boolean;
   compact: boolean;
-  onToggleLike: (e: React.MouseEvent) => void;
+  onShare: (e: React.MouseEvent) => void;
 }) {
   return (
     <div
@@ -288,10 +274,9 @@ const ImagePanelFull = memo(function ImagePanelFull({
         </span>
       )}
 
-      {/* Like */}
       <button
-        onClick={onToggleLike}
-        aria-label={liked ? "Remove from wishlist" : "Save to wishlist"}
+        onClick={onShare}
+        aria-label={`Share ${title}`}
         style={{
           position: "absolute",
           top: compact ? 8 : 12,
@@ -299,39 +284,24 @@ const ImagePanelFull = memo(function ImagePanelFull({
           width: compact ? 30 : 34,
           height: compact ? 30 : 34,
           borderRadius: "50%",
-          background: liked ? "rgba(224,123,84,0.95)" : "rgba(255,255,255,0.88)",
+          background: "rgba(255,255,255,0.88)",
           backdropFilter: "blur(8px)",
-          border: "none",
+          border: "1px solid rgba(255,255,255,0.5)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           cursor: "pointer",
-          transition:
-            "background .2s ease, transform .25s cubic-bezier(.34,1.56,.64,1)",
-          transform: liked ? "scale(1.15)" : "scale(1)",
+          transition: "background .2s, transform .2s cubic-bezier(.34,1.56,.64,1)",
           zIndex: 2,
         }}
         onMouseEnter={(e) => {
-          if (!liked)
-            (e.currentTarget as HTMLElement).style.background =
-              "rgba(255,255,255,1)";
+          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.98)";
         }}
         onMouseLeave={(e) => {
-          if (!liked)
-            (e.currentTarget as HTMLElement).style.background =
-              "rgba(255,255,255,0.88)";
+          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.88)";
         }}
       >
-        <HeartIcon
-          style={{
-            color: liked ? "#fff" : "#9b8f83",
-            fill: liked ? "#fff" : "none",
-            width: 15,
-            height: 15,
-            flexShrink: 0,
-            transition: "color .2s, fill .2s",
-          }}
-        />
+        <Share2 style={{ width: 14, height: 14, color: "#6f6257" }} />
       </button>
 
       {/* Rating — bottom right on image */}
@@ -345,7 +315,6 @@ const ImagePanelFull = memo(function ImagePanelFull({
 function HavenPropertyCard({ property, index }: HavenPropertyCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref);
-  const [liked, setLiked] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
@@ -360,24 +329,51 @@ function HavenPropertyCard({ property, index }: HavenPropertyCardProps) {
     return () => mediaQuery.removeEventListener("change", update);
   }, []);
 
-  const toggleLike = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    setLiked((prev) => !prev);
-  }, []);
+  const handleShare = useCallback(
+    async (e: React.MouseEvent) => {
+      e.stopPropagation();
+
+      const shareUrl = `${window.location.origin}/property/${property.id}`;
+
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: property.title,
+            text: `${property.title} in ${property.location}`,
+            url: shareUrl,
+          });
+          return;
+        }
+
+        await navigator.clipboard.writeText(shareUrl);
+      } catch {
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+        } catch {
+          window.prompt("Copy this stay link", shareUrl);
+        }
+      }
+    },
+    [property.id, property.location, property.title]
+  );
 
   const handleMouseEnter = useCallback(() => setHovered(true), []);
   const handleMouseLeave = useCallback(() => setHovered(false), []);
 
   // Staggered entrance via inView
-  const delay = `${index * 0.065}s`;
+  // If it's one of the first 3-4 cards, don't delay it or hide it as aggressively
+const delay = index < 4 ? "0s" : `${index * 0.065}s`;
+const initialOpacity = index < 4 ? 1 : (inView ? 1 : 0);
 
   return (
     <div
       ref={ref}
       style={{
         opacity: inView ? 1 : 0,
-        transform: inView ? "translateY(0)" : "translateY(24px)",
-        transition: `opacity 0.5s ease ${delay}, transform 0.5s ease ${delay}`,
+        transform: inView ? "translateY(0)" : "translateY(15px)",
+        transition: `opacity 0.6s ease ${delay}, transform 0.6s ease ${delay}`,
+        minHeight: isMobile ? "320px" : "420px",
+        // REMOVED contentVisibility and containIntrinsicSize
       }}
     >
       <article
@@ -398,7 +394,7 @@ overflow: "visible",
 
           // ── Elevation ──
           boxShadow: hovered ? SHADOW_HOVER : SHADOW_REST,
-          transform: hovered ? "translateY(-7px) scale(1.008)" : "translateY(0) scale(1)",
+          transform: hovered ? "translateY(-5px) scale(1.006)" : "translateY(0) scale(1)",
           transition:
             "box-shadow 0.35s cubic-bezier(0.25,0.46,0.45,0.94), transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)",
           willChange: "transform, box-shadow",
@@ -408,13 +404,12 @@ overflow: "visible",
         <ImagePanelFull
           image={property.images?.[0] || "/fallback-property.jpg"}
           tag={property.tag}
-          liked={liked}
           title={property.title}
           location={property.location}
           rating={property.rating}
           hovered={hovered}
           compact={isMobile}
-          onToggleLike={toggleLike}
+          onShare={handleShare}
         />
 
         {/* ── Body ── */}
@@ -494,21 +489,6 @@ overflow: "visible",
             </span>
           </div>
 
-          {/* Nights label */}
-          {property.nights && (
-            <p
-              style={{
-                margin: isMobile ? "4px 0 0" : "5px 0 0",
-                fontSize: isMobile ? 10.5 : 11.5,
-                color: "#B0A89E",
-                fontWeight: 400,
-                display: isMobile ? "none" : "block",
-              }}
-            >
-              {property.nights}
-            </p>
-          )}
-
           {/* ── Divider ── */}
           <div
             style={{
@@ -563,9 +543,7 @@ overflow: "visible",
                 alignItems: "center",
                 gap: 5,
                 padding: isMobile ? "7px 10px" : "8px 14px",
-                background: hovered
-                  ? "#C76644"
-                  : "#E07B54",
+                background: hovered ? "#C76644" : "#E07B54",
                 color: "#fff",
                 fontSize: isMobile ? 11.25 : 12.5,
                 fontWeight: 600,

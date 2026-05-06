@@ -4,6 +4,7 @@ import { useRef, useState, useCallback, useEffect } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import HavenPropertyCard from "@/components/haven/HavenPropertyCard";
 import { SectionHeader } from "@/components/home/SectionHeader";
+import PropertyCardSkeleton from "@/components/skeletons/PropertyCardSkeleton";
 import type { HomeProperty } from "@/components/homeData";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -13,6 +14,7 @@ interface Props {
   subtitle?: string;
   viewAllHref?: string;
   properties: HomeProperty[];
+  loading?: boolean;
   cardWidth?: number;
   gap?: number;
 }
@@ -124,6 +126,7 @@ export default function HorizontalPropertySection({
   subtitle,
   viewAllHref,
   properties,
+  loading = false,
   cardWidth = CARD_WIDTH,
   gap = GAP,
 }: Props) {
@@ -180,11 +183,11 @@ export default function HorizontalPropertySection({
     [cardWidth, gap]
   );
 
-  if (!properties.length) return null;
+  if (!loading && !properties.length) return null;
 
   return (
     <section
-      className="py-4"
+      className="hs-section py-4"
       style={{ animation: "sectionFadeIn .5s ease both" }}
     >
       <style>{`
@@ -198,12 +201,23 @@ export default function HorizontalPropertySection({
         }
 
         /* ── Track ── */
+        /* ── Track ── */
+        /* ── Track ── */
         .hs-track {
           display: flex;
           gap: ${gap}px;
           overflow-x: auto;
-          padding-top: 12px;
-          padding-bottom: 16px;
+          padding-top: 24px;
+          
+          /* INCREASED to 104px to fit the entire 96px shadow curve */
+          padding-bottom: 104px; 
+          /* Offset the layout so it doesn't push your page down */
+          margin-bottom: -80px; 
+          
+          padding-left: 28px;
+          padding-right: 28px;
+          scroll-padding-left: 28px;
+          scroll-padding-right: 28px;
           scroll-snap-type: x mandatory;
           scroll-behavior: smooth;
           -webkit-overflow-scrolling: touch;
@@ -217,6 +231,18 @@ export default function HorizontalPropertySection({
           max-width: ${cardWidth}px;
           flex-shrink: 0;
           scroll-snap-align: start;
+          
+          /* 3. Z-Index magic to overlap siblings */
+          position: relative;
+          z-index: 1;
+          /* Wait 0.35s before dropping the z-index so the shadow doesn't get clipped while shrinking */
+          transition: z-index 0s 0.35s; 
+        }
+        
+        .hs-card:hover {
+          z-index: 50;
+          /* Instantly jump to the front when hovered */
+          transition: z-index 0s 0s; 
         }
 
         /* ── View all link ── */
@@ -242,6 +268,9 @@ export default function HorizontalPropertySection({
 
         /* ── Mobile overrides (≤ 639 px) ── */
         @media (max-width: 639px) {
+          .hs-section {
+            animation: none !important;
+          }
           .hs-section-inner {
             border-radius: 24px !important;
             padding: 20px 0 20px !important;
@@ -264,6 +293,7 @@ export default function HorizontalPropertySection({
             /* ~88 % of viewport so the next card peeks */
             min-width: min(${cardWidth}px, calc(88vw - 40px)) !important;
             max-width: min(${cardWidth}px, calc(88vw - 40px)) !important;
+            animation: none !important;
           }
           .hs-mobile-footer {
             display: flex !important;
@@ -285,10 +315,10 @@ export default function HorizontalPropertySection({
             padding: 28px 28px !important;
           }
           .hs-track {
-            padding-left: 4px !important;
-            padding-right: 40px !important;
-          }
-          .hs-card {
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+  scroll-padding-left: 24px !important;
+  scroll-padding-right: 24px !important;
             min-width: min(${cardWidth}px, calc(46vw - 32px)) !important;
             max-width: min(${cardWidth}px, calc(46vw - 32px)) !important;
           }
@@ -302,6 +332,7 @@ export default function HorizontalPropertySection({
             background: "linear-gradient(180deg, #fafaff 0%, #fafaff 100%)",
             boxShadow:
               "inset 0 1px 0 rgba(255,255,255,0.9), 0 10px 30px rgba(28,25,23,0.04)",
+              overflow: "visible",
           }}
         >
           {/* ── Header row ── */}
@@ -313,6 +344,8 @@ export default function HorizontalPropertySection({
               justifyContent: "space-between",
               gap: 20,
               marginBottom: 28,
+              opacity: loading ? 0 : 1,
+              pointerEvents: loading ? "none" : "auto",
             }}
           >
             {/* Left: section title */}
@@ -335,40 +368,50 @@ export default function HorizontalPropertySection({
               <ArrowButton
                 direction="left"
                 onClick={() => scrollBy("left")}
-                disabled={!canScrollLeft}
+                disabled={loading || !canScrollLeft}
               />
               <ArrowButton
                 direction="right"
                 onClick={() => scrollBy("right")}
-                disabled={!canScrollRight}
+                disabled={loading || !canScrollRight}
               />
             </div>
           </div>
 
           {/* ── Scroll track ── */}
+          {/* ── Scroll track ── */}
           <div style={{ position: "relative" }}>
             <div
               ref={trackRef}
               className="hs-track"
-              style={{
-                paddingLeft: 0,
-                paddingRight: 80,
-                overflowY: "visible",
-              }}
             >
-              {properties.map((property, index) => (
-                <div
-                  key={property.id}
-                  className="hs-card"
-                  style={{
-                    animation: `cardIn .45s cubic-bezier(.34,1.2,.64,1) ${
-                      index * 0.07
-                    }s both`,
-                  }}
-                >
-                  <HavenPropertyCard property={property} index={index} />
-                </div>
-              ))}
+              {loading
+                ? Array.from({ length: 4 }, (_, index) => (
+                    <div
+                      key={`skeleton-${title}-${index}`}
+                      className="hs-card"
+                      style={{
+                        animation: `cardIn .45s cubic-bezier(.34,1.2,.64,1) ${
+                          index * 0.07
+                        }s both`,
+                      }}
+                    >
+                      <PropertyCardSkeleton />
+                    </div>
+                  ))
+                : properties.map((property, index) => (
+                    <div
+                      key={property.id}
+                      className="hs-card"
+                      style={{
+                        animation: `cardIn .45s cubic-bezier(.34,1.2,.64,1) ${
+                          index * 0.07
+                        }s both`,
+                      }}
+                    >
+                      <HavenPropertyCard property={property} index={index} />
+                    </div>
+                  ))}
             </div>
           </div>
 
@@ -378,7 +421,9 @@ export default function HorizontalPropertySection({
             style={{ display: "none" }} // shown via CSS on mobile
           >
             {/* Dot indicators */}
-            <DotIndicators total={properties.length} activeIndex={activeIndex} />
+            {!loading && (
+              <DotIndicators total={properties.length} activeIndex={activeIndex} />
+            )}
 
             {/* View all (mobile) */}
             {viewAllHref && (

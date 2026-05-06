@@ -12,6 +12,7 @@ export default function HomeSections({
   filters: any;
 }) {
   const [properties, setProperties] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const filteredProperties = properties
   .filter((p) => {
     if (
@@ -75,16 +76,20 @@ export default function HomeSections({
 
   useEffect(() => {
     const fetchProperties = async () => {
-      const snapshot = await getDocs(
-        collection(db, "properties")
-      );
+      try {
+        const snapshot = await getDocs(
+          collection(db, "properties")
+        );
 
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
 
-      setProperties(data);
+        setProperties(data);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchProperties();
@@ -115,17 +120,20 @@ export default function HomeSections({
         title="Featured <em>Luxury</em> Stays"
         subtitle="Handpicked premium stays crafted for comfort and elevated living."
         properties={featuredLuxury}
+        loading={loading}
       />
 
       <HorizontalPropertySection
         title="Popular stays in New Delhi"
         properties={newDelhiStays}
+        loading={loading}
       />
 
       <HorizontalPropertySection
         title="Trending stays in <em>Noida</em>"
         subtitle="Most booked spaces loved by guests this week."
         properties={noidaStays}
+        loading={loading}
       />
 
       <WhyChooseTripleOne />

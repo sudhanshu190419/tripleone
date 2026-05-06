@@ -88,10 +88,10 @@ export default function BookingCard({
   }
 
   return (
-    <div className="sticky top-8 rounded-[28px] border border-black/5 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.06)]">
+    <div className="rounded-[28px] border border-[#F2E9E0] bg-[#FFFEFC] p-5 sm:p-7 shadow-[0_30px_92px_rgba(15,23,42,0.15),0_12px_28px_rgba(224,123,84,0.11),0_2px_8px_rgba(15,23,42,0.08)] md:sticky md:top-8">
 
       {/* Top */}
-      <div className="pb-6 border-b border-black/5">
+      <div className="pb-5 sm:pb-6 border-b border-black/5">
         <div className="flex items-start justify-between gap-4">
 
           {/* Price */}
@@ -101,7 +101,7 @@ export default function BookingCard({
             </p>
 
             <div className="flex items-end gap-2">
-              <h2 className="text-4xl font-semibold tracking-tight text-neutral-950">
+              <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-neutral-950">
                 {formatPrice(property.price)}
               </h2>
 
@@ -129,7 +129,7 @@ export default function BookingCard({
       </div>
 
       {/* Availability */}
-      <div className="py-6 border-b border-black/5">
+      <div className="py-5 sm:py-6 border-b border-black/5">
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-medium text-neutral-900">
             Availability
@@ -152,18 +152,18 @@ export default function BookingCard({
                     : "bg-rose-500"
                 }`}
               />
-              {isAvailable ? "Available" : "Booked"}
+              {isAvailable ? "Available Now" : "Booked"}
             </div>
           )}
         </div>
 
         <p className="text-sm text-neutral-500 leading-relaxed">
-          Check-in from 12:00 PM. Direct host confirmation required.
+          Check-in from 12:00 PM.
         </p>
       </div>
 
       {/* Actions */}
-      <div className="pt-6 space-y-3">
+      <div className="pt-5 sm:pt-6 space-y-3">
 
         {/* Call */}
         <a
@@ -195,7 +195,7 @@ export default function BookingCard({
       </div>
 
       {/* Footer note */}
-      <p className="mt-5 text-xs text-neutral-400 text-center leading-relaxed">
+      <p className="mt-4 sm:mt-5 text-xs text-neutral-400 text-center leading-relaxed">
         Secure communication. No booking charges applied.
       </p>
     </div>

@@ -40,6 +40,13 @@ const UserIcon = () => (
   </svg>
 );
 
+const PhoneIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.06 19.3 19.3 0 0 1-6-6A19.8 19.8 0 0 1 2.13 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.61a2 2 0 0 1-.45 2.11L8.11 9.61a16 16 0 0 0 6.28 6.28l1.16-1.16a2 2 0 0 1 2.11-.45c.83.29 1.71.5 2.61.62A2 2 0 0 1 22 16.92z" />
+  </svg>
+);
+
 const ChevronDownIcon = () => (
   <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -70,6 +77,7 @@ export default function Navbar({
   searchLocation,
   stayType,
 }: NavbarProps) {
+  const mobilePhone = "919876543210";
   const [menuOpen,  setMenuOpen]  = useState(false);
   const [hoverHost, setHoverHost] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -172,110 +180,35 @@ export default function Navbar({
           </div>
 
           {/* ── RIGHT CONTROLS ───────────────────────────────────────── */}
-          <div className="hidden md:flex items-center gap-1 flex-shrink-0">
-
-            {/* "Become a host" link */}
+          <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
             <a
-              href="/host"
-              onMouseEnter={() => setHoverHost(true)}
-              onMouseLeave={() => setHoverHost(false)}
-              className="host-link relative text-[13.5px] font-medium text-[#222]
-                         px-4 py-2 rounded-full transition-colors duration-200
-                         hover:bg-[#F7F7F7]"
+              href={`tel:${mobilePhone}`}
+              className="group inline-flex items-center gap-3 rounded-full border border-[#E8DBCF] bg-white/90 px-4 py-2.5 shadow-[0_16px_32px_rgba(15,23,42,0.08)] backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_20px_38px_rgba(15,23,42,0.11)]"
+              aria-label="Call Stayfinder"
             >
-              Become a host
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#FFF2EA] to-[#FBE4D9] text-[#D86A3A] shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] transition-transform duration-200 group-hover:scale-[1.04]">
+                <PhoneIcon />
+              </span>
+              <span className="flex flex-col items-start leading-none">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#A18F83]">
+                  Call us
+                </span>
+                <span className="text-sm font-semibold tracking-[0.02em] text-[#1F2937]">
+                  +91 98765 43210
+                </span>
+              </span>
             </a>
-
-            {/* Language / globe */}
-            <button
-              aria-label="Choose language"
-              className="p-2.5 rounded-full text-[#222] transition-colors duration-200
-                         hover:bg-[#F7F7F7] hover:text-[#FF385C]"
-            >
-              <GlobeIcon />
-            </button>
-
-            {/* Profile / menu pill */}
-            <div ref={menuRef} className="relative">
-              <button
-                onClick={() => setMenuOpen(o => !o)}
-                aria-expanded={menuOpen}
-                aria-haspopup="true"
-                className={`
-                  flex items-center gap-2.5
-                  border rounded-full pl-3.5 pr-2.5 py-2
-                  transition-all duration-200 select-none
-                  ${menuOpen
-                    ? "border-[#BBBBBB] shadow-[0_2px_12px_rgba(0,0,0,0.12)] bg-white"
-                    : "border-[#DDDDDD] shadow-[0_1px_4px_rgba(0,0,0,0.06)] hover:shadow-[0_2px_10px_rgba(0,0,0,0.1)] bg-white"
-                  }
-                `}
-              >
-                {/* hamburger */}
-                <span className="text-[#222] flex items-center">
-                  <MenuIcon />
-                </span>
-
-                {/* avatar */}
-                <div className="avatar-wrap relative">
-                  <div className="avatar-ring w-7 h-7 rounded-full bg-gradient-to-br
-                                  from-[#888] to-[#555] flex items-center justify-center
-                                  text-white transition-all duration-200">
-                    <UserIcon />
-                  </div>
-                  {/* notification dot — remove if not needed */}
-                  <NotifDot />
-                </div>
-
-                {/* tiny chevron — rotates when open */}
-                <span className={`text-[#555] transition-transform duration-200
-                                  ${menuOpen ? "rotate-180" : ""}`}>
-                  <ChevronDownIcon />
-                </span>
-              </button>
-
-              {/* ── DROPDOWN ─────────────────────────────────────────── */}
-              {menuOpen && (
-                <div
-                  className="menu-dropdown absolute right-0 top-[calc(100%+8px)] w-56
-                             bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.14)]
-                             border border-[#EBEBEB] overflow-hidden z-50"
-                >
-                  {MENU_ITEMS.map((item, idx) =>
-                    "divider" in item ? (
-                      <hr key={idx} className="border-[#F0F0F0] my-1" />
-                    ) : (
-                      <button
-                        key={idx}
-                        onClick={() => setMenuOpen(false)}
-                        className={`
-                          w-full text-left px-4 py-3 text-[13.5px]
-                          transition-colors duration-150
-                          hover:bg-[#F7F7F7] active:bg-[#EFEFEF]
-                          ${item.bold
-                            ? "font-semibold text-[#111]"
-                            : "font-normal text-[#444]"
-                          }
-                        `}
-                      >
-                        {item.label}
-                      </button>
-                    )
-                  )}
-                </div>
-              )}
-            </div>
           </div>
 
           {/* ── MOBILE RIGHT: avatar only ───────────────────────────── */}
-          <button className="flex md:hidden items-center border border-[#DDD]
-                             rounded-full p-1.5 gap-1.5 shadow-sm bg-white">
-            <MenuIcon />
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#888] to-[#555]
-                            flex items-center justify-center text-white">
-              <UserIcon />
-            </div>
-          </button>
+          <div className="flex md:hidden items-center gap-2 flex-shrink-0">
+            <button className="flex items-center border border-[#DDD] rounded-full p-1.5 gap-1.5 shadow-sm bg-white">
+              <MenuIcon />
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#888] to-[#555] flex items-center justify-center text-white">
+                <UserIcon />
+              </div>
+            </button>
+          </div>
 
         </div>
 

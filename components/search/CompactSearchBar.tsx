@@ -56,7 +56,7 @@ function Divider() {
   return (
     <span
       aria-hidden="true"
-      className="h-6 w-px flex-shrink-0 bg-[#E7DED4]"
+      className="h-6 w-px flex-shrink-0 bg-[#DCCFC1]"
     />
   );
 }
@@ -76,7 +76,7 @@ function LiveIndicator() {
 
 function SearchButton() {
   return (
-    <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#C05A35] transition-all duration-150 group-hover:scale-[1.06] group-hover:bg-[#A84A28] group-active:scale-95">
+    <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#B94F2C] shadow-[0_8px_18px_rgba(185,79,44,0.25)] transition-all duration-150 group-hover:scale-[1.06] group-hover:bg-[#9F4122] group-active:scale-95">
       <Search className="h-[15px] w-[15px] text-white" strokeWidth={2} />
     </span>
   );
@@ -109,23 +109,22 @@ export default function CompactSearchBar({
         onClick={handleClick}
         aria-label="Open search"
         className={cn(
-          // FIX: Swapped out max-w-[92vw] and mx-auto for a safer max-w-sm with a right margin constraint
-          "flex sm:hidden w-[calc(100%-2.5rem)] max-w-sm mr-15 ml-2 min-w-0 items-center gap-3 rounded-full border border-[#E7DED4] bg-white px-2.5 py-2 shadow-[0_3px_12px_rgba(0,0,0,0.06)] transition-all duration-300",
+          "flex sm:hidden w-[12.25rem] max-w-[62vw] min-w-0 items-center gap-2 rounded-[22px] border border-[#E2D4C5] bg-[linear-gradient(180deg,#FFF9F3_0%,#FFFDFB_100%)] px-2 py-2 shadow-[0_8px_20px_rgba(17,24,39,0.08),0_2px_5px_rgba(17,24,39,0.05)] ring-1 ring-white/70 transition-all duration-300",
           isVisible
             ? "translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-2 opacity-0"
         )}
       >
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#E07B54] text-white">
-          <Search className="h-4 w-4" />
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#B94F2C] text-white shadow-[0_8px_18px_rgba(185,79,44,0.24)]">
+          <Search className="h-[15px] w-[15px]" />
         </div>
 
-        <div className="min-w-0 flex-1 flex flex-col justify-center text-left">
-          <p className="truncate text-sm font-semibold leading-tight text-[#1C1917]">
+        <div className="min-w-0 flex-1 flex flex-col justify-center text-left pr-0.5">
+          <p className="truncate text-[13px] font-semibold leading-tight text-[#1C1917]">
             Where to?
           </p>
-          <p className="truncate text-xs leading-tight text-[#8A8178] mt-0.5">
-            Destination 
+          <p className="truncate text-[10px] leading-tight text-[#8A8178] mt-0.5">
+            Search destination
           </p>
         </div>
       </button>
@@ -137,12 +136,12 @@ export default function CompactSearchBar({
         onClick={handleClick}
         className={cn(
           "group relative mx-auto hidden sm:flex min-w-0 flex-1 max-w-[92vw] sm:max-w-xl items-center gap-0 overflow-hidden",
-          "rounded-full border border-[#E7DED4] bg-white",
+          "rounded-full border border-[#D9CDBF] bg-[#FFFCF8]",
           "px-[5px] py-[5px] pl-1.5",
-          "shadow-[0_2px_12px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.04)]",
-          "hover:border-[#C8BEB4] hover:shadow-[0_4px_24px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06)]",
+          "shadow-[0_8px_24px_rgba(17,24,39,0.08),0_2px_6px_rgba(17,24,39,0.05)]",
+          "hover:border-[#C9B7A8] hover:shadow-[0_14px_34px_rgba(17,24,39,0.12),0_4px_10px_rgba(17,24,39,0.06)]",
           "before:pointer-events-none before:absolute before:inset-0 before:rounded-full",
-          "before:bg-[linear-gradient(90deg,transparent_0%,rgba(224,123,84,0.06)_50%,transparent_100%)]",
+          "before:bg-[linear-gradient(90deg,transparent_0%,rgba(224,123,84,0.08)_50%,transparent_100%)]",
           "before:translate-x-[-100%] before:animate-[shimmer_3.2s_ease-in-out_infinite]",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C05A35] focus-visible:ring-offset-2",
           "transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]",

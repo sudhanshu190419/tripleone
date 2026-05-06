@@ -19,7 +19,7 @@ export const CardCarousel: React.FC<CarouselProps> = ({
   const duplicatedImages = [...images, ...images];
 
   return (
-    <section className="w-full overflow-hidden py-12">
+    <section className="w-full overflow-hidden pt-4 pb-12 sm:py-12">
       <style>{`
         @keyframes marquee {
           0% {
@@ -43,7 +43,7 @@ export const CardCarousel: React.FC<CarouselProps> = ({
 
       <div className="mx-auto max-w-7xl px-3 sm:px-4 lg:px-6">
         {/* Heading */}
-        <div className="mb-12 flex flex-col items-center text-center">
+        <div className="mb-8 flex flex-col items-center text-center sm:mb-12">
           <span className="mb-3 text-[12px] font-semibold uppercase tracking-[0.24em] text-[#A67C52]">
             Stay Inspired
           </span>
