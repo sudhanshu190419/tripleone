@@ -45,7 +45,7 @@ export default function HavenHome() {
   const heroRef = useRef<HTMLDivElement>(null);
   const [isHeroVisible, setIsHeroVisible] = useState(true);
   const stickyInputRef = useRef<HTMLInputElement>(null);
-  const [stayType, setStayType] = useState<string | null>(null);
+  const [stayType, setStayType] = useState("");
 const [filters, setFilters] = useState<FilterValues>({
   type: null,
   location: null,

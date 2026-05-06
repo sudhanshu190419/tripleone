@@ -26,9 +26,7 @@ export default function InstagramSection() {
 
         <CardCarousel
           images={reels}
-          autoplayDelay={2200}
-          showPagination={true}
-          showNavigation={true}
+          
         />
       </div>
     </section>

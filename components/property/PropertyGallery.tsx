@@ -1,32 +1,36 @@
 import Image from "next/image";
-
 export default function PropertyGallery({ images }: { images: string[] }) {
-  // Ensure we have at least 3 images for the layout
-  const displayImages = [...images];
-  while (displayImages.length < 3) displayImages.push(displayImages[0]);
+  // 1. Define a fallback image URL (use a local asset or a placeholder)
+  const placeholder = "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=1000";
+
+  // 2. Ensure we always have a valid array with at least 3 strings
+  const displayImages = [...(images || [])];
+  
+  // Fill the array with the first image, or the placeholder if the first image doesn't exist
+  while (displayImages.length < 3) {
+    displayImages.push(displayImages[0] || placeholder);
+  }
 
   return (
     <div className="relative mb-12 group">
-      {/* Sleek asymmetric grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 h-[400px] md:h-[500px] rounded-2xl overflow-hidden">
         
         {/* Main Feature Image */}
-        <div className="md:col-span-2 relative h-full overflow-hidden">
+        <div className="md:col-span-2 relative h-full overflow-hidden bg-zinc-100">
           <Image
             src={displayImages[0]}
             alt="Property primary view"
             fill
             priority
             sizes="(max-width: 768px) 100vw, 66vw"
+            // Use placeholder if image fails to load
             className="object-cover transition-transform duration-700 group-hover:scale-105"
           />
-          {/* Subtle overlay for premium feel */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/5 to-transparent pointer-events-none" />
         </div>
 
         {/* Side Stack */}
         <div className="hidden md:flex flex-col gap-2 h-full">
-          <div className="relative h-1/2 w-full overflow-hidden">
+          <div className="relative h-1/2 w-full overflow-hidden bg-zinc-100">
             <Image
               src={displayImages[1]}
               alt="Property detail 1"
@@ -35,7 +39,7 @@ export default function PropertyGallery({ images }: { images: string[] }) {
               className="object-cover transition-transform duration-700 hover:scale-105"
             />
           </div>
-          <div className="relative h-1/2 w-full overflow-hidden">
+          <div className="relative h-1/2 w-full overflow-hidden bg-zinc-100">
             <Image
               src={displayImages[2]}
               alt="Property detail 2"

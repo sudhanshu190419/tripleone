@@ -8,10 +8,12 @@ interface CarouselProps {
     src: string;
     alt: string;
   }[];
+  autoplayDelay?: number;
 }
 
 export const CardCarousel: React.FC<CarouselProps> = ({
   images,
+  autoplayDelay = 25000,
 }) => {
   // duplicate images for seamless loop
   const duplicatedImages = [...images, ...images];
@@ -31,7 +33,7 @@ export const CardCarousel: React.FC<CarouselProps> = ({
         .marquee-track {
           display: flex;
           width: max-content;
-          animation: marquee 25s linear infinite;
+          animation: marquee ${autoplayDelay}ms linear infinite;
         }
 
         .marquee-wrapper:hover .marquee-track {

@@ -43,20 +43,28 @@ export default async function SearchPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  // 1. Resolve params first
   const params = await searchParams;
 
+  // 2. Fetch data
   const snapshot = await getDocs(collection(db, "properties"));
 
+  // 3. Serialize strictly
   const properties = snapshot.docs.map((doc) => {
     const data = doc.data();
-    const serializedData = serializeValue(data) as Record<string, unknown>;
-
+    
     return {
+      ...data,
       id: doc.id,
-      ...serializedData,
-    } as any;
-  }) as any[];
+      // Manually ensure the most common "problem" field is a string
+      createdAt: data.createdAt?.toDate 
+        ? data.createdAt.toDate().toISOString() 
+        : new Date().toISOString(), 
+      // If other fields might have dates, you can still use your serializeValue here
+    };
+  });
 
+  // 4. Clean filters
   const extractParam = (param: string | string[] | undefined) => 
     (Array.isArray(param) ? param[0] : param) || "";
 
@@ -74,7 +82,10 @@ export default async function SearchPage({
       <div className="absolute left-0 top-24 -z-10 h-64 w-64 rounded-full bg-[#E07B54]/10 blur-3xl" />
       <div className="absolute right-0 top-40 -z-10 h-72 w-72 rounded-full bg-[#C17F53]/10 blur-3xl" />
 
-      <SearchResultsClient properties={properties} initialFilters={initialFilters} />
+      <SearchResultsClient 
+        properties={JSON.parse(JSON.stringify(properties))} 
+        initialFilters={initialFilters} 
+      />
     </div>
   );
 }

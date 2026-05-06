@@ -3,17 +3,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import FilterBar, { FilterValues } from "@/components/haven/FilterBar";
 import HavenPropertyCard from "@/components/haven/HavenPropertyCard";
+import type { HomeProperty } from "@/components/homeData";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-type Property = {
-  id: string | number;
-  location: string;
-  category: string;
-  price: number;
-  rating?: number;
-  [key: string]: unknown;
-};
+type Property = HomeProperty;
 
 type SearchResultsClientProps = {
   properties: Property[];
@@ -90,14 +82,18 @@ const sortFn =
     return sortFn ? [...filtered].sort(sortFn) : filtered;
   }, [filters, properties]);
 
-  const handleFilterChange = useCallback((next: FilterValues) => {
+  const handleFilterChange = useCallback(
+  (next: React.SetStateAction<FilterValues>) => {
     setFiltering(true);
     setFilters(next);
+
     cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(() =>
-      requestAnimationFrame(() => setFiltering(false)),
+      requestAnimationFrame(() => setFiltering(false))
     );
-  }, []);
+  },
+  []
+);
 
   const locationLabel = useMemo(
     () => filters.location?.trim().split(/,\s*/)[0] || "your destination",
@@ -168,7 +164,7 @@ const sortFn =
 
       <div className="min-h-screen bg-[#FBFAF8] text-[#1C1917]">
 
-        {/* ── Hero ────────────────────────────────────────────────────────── */}
+        {/* Hero*/}
         <section className="relative h-[38vh] min-h-[320px] w-full overflow-hidden sm:h-[46vh] sm:min-h-[420px] lg:h-[58vh] lg:max-h-[560px]">
           {/* Image */}
           <img
@@ -244,12 +240,12 @@ const sortFn =
 
         <div className="mx-auto max-w-[1320px] px-4 pb-24 sm:px-8 lg:px-12">
 
-          {/* ── Filter Bar ──────────────────────────────────────────────── */}
+          {/*Filter Bar */}
           <div className="mt-2">
             <FilterBar filters={filters} setFilters={handleFilterChange} />
           </div>
 
-          {/* ── Active Chips ────────────────────────────────────────────── */}
+          {/* Active Chips */}
           {hasActiveFilter && (
             <div className="mt-2 flex flex-wrap items-center gap-2">
               {activeChips.map((chip) => (
@@ -273,7 +269,7 @@ const sortFn =
             </div>
           )}
 
-          {/* ── Results ─────────────────────────────────────────────────── */}
+          {/*  Results  */}
           <main
             className="mt-10 sm:mt-12"
             style={{

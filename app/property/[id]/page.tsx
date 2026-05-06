@@ -30,22 +30,42 @@ export default async function PropertyPage({
 }) {
   const { id } = await params;
   const docRef = doc(db, "properties", id);
-const docSnap = await getDoc(docRef);
+  const docSnap = await getDoc(docRef);
 
-if (!docSnap.exists()) {
-  notFound();
-}
+  if (!docSnap.exists()) {
+    notFound();
+  }
 
-const property = {
+  const data = docSnap.data();
+
+if (!data) notFound();
+
+// Create the object and ensure it matches the Property interface
+const property: Property = {
   id: docSnap.id,
-  ...docSnap.data(),
-} as Property;
+  title: data.title ?? "",
+  location: data.location ?? "",
+  category: data.category ?? "",
+  price: Number(data.price ?? 0),
+  rating: Number(data.rating ?? 0),
+  description: data.description ?? "",
+  images: data.images ?? [],
+  phone: data.phone ?? "",
+  email: data.email ?? "",
+  address: data.address ?? "",
+  checkIn: data.checkIn ?? "",
+  checkOut: data.checkOut ?? "",
+  amenities: data.amenities ?? [],
+  availability: !!data.availability,
+  // This satisfies the "Plain Object" requirement for Next.js
+  createdAt: data.createdAt?.toDate 
+    ? data.createdAt.toDate().toISOString() 
+    : new Date().toISOString(),
+} as any;
 
   return (
     <main className="bg-white text-neutral-900 min-h-screen pt-[90px]">
       <div className="max-w-[1120px] mx-auto px-5 py-8">
-        
-
         <PropertyGallery images={property.images || []} />
 
         <h1 className="text-2xl font-semibold mb-1">{property.title}</h1>

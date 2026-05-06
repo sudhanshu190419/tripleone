@@ -23,11 +23,15 @@ export const fetchTaxonomyItems = async (
   const snapshot = await getDocs(collection(db, collectionName));
 
   return snapshot.docs
-    .map((item) => ({
-      id: item.id,
-      name: String(item.data().name || "").trim(),
-      createdAt: item.data().createdAt,
-    }))
+    .map((item) => {
+      const data = item.data();
+      return {
+        id: item.id,
+        name: String(data.name || "").trim(),
+        // Convert Firestore Timestamp to a ISO string or null
+        createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : null,
+      };
+    })
     .filter((item) => item.name.length > 0)
     .sort((a, b) => a.name.localeCompare(b.name));
 };
