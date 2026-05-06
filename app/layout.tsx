@@ -24,7 +24,12 @@ export default function RootLayout({
       <body
   className={`${inter.className} ${cormorant.variable} min-h-full flex flex-col bg-[#F8F2EA]`}
 >
-        <Navbar isScrolled={false} forceSearch />
+        <Navbar
+    isScrolled={false}
+    forceSearch
+    searchLocation=""
+    stayType=""
+  />
         {children}
       </body>
     </html>
