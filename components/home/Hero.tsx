@@ -285,24 +285,17 @@ export default function HavenHero({
                             }}
                             placeholder={field.placeholder}
                             className="w-full truncate bg-transparent text-[13px] text-[#78716C] outline-none placeholder:text-[#C4BAB4]"
-                            inputMode={
-                              isMobile && field.label === "Stay Type"
-                                ? "none"
-                                : "text"
-                            }
-                            readOnly={isMobile && field.label === "Stay Type"}
+                            inputMode={isMobile ? "none" : "text"}
+                            readOnly={isMobile}
                             onFocus={(e) => {
                               setFocusIndex(idx);
-                              if (field.label === "Stay Type" && isMobile) {
+                              if (isMobile) {
                                 e.currentTarget.blur();
                                 onSearchFocus();
                                 return;
                               }
 
-                              if (
-                                field.label === "Destination" ||
-                                field.label === "Stay Type"
-                              ) {
+                              if (field.label === "Destination" || field.label === "Stay Type") {
                                 onSearchFocus();
                               }
                             }}
