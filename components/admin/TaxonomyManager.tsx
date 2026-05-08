@@ -65,7 +65,7 @@ export default function TaxonomyManager({
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-16">
+    <div className="max-w-3xl mx-auto px-4 py-10 sm:px-6 sm:py-16">
       <h1 className="text-3xl font-bold mb-3">{title}</h1>
       <p className="text-neutral-500 mb-8">{description}</p>
 
@@ -86,7 +86,7 @@ export default function TaxonomyManager({
         <button
           type="submit"
           disabled={submitting}
-          className="px-6 py-3 bg-black text-white rounded-lg disabled:opacity-60"
+          className="w-full px-6 py-3 bg-black text-white rounded-lg disabled:opacity-60 sm:w-auto"
         >
           {submitting ? "Saving..." : "Add"}
         </button>
@@ -99,7 +99,7 @@ export default function TaxonomyManager({
           items.map((item) => (
             <div
               key={item.id}
-              className="border rounded-xl p-5 flex items-center justify-between"
+              className="border rounded-xl p-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
             >
               <div>
                 <h2 className="font-semibold text-lg">{item.name}</h2>
@@ -107,7 +107,7 @@ export default function TaxonomyManager({
 
               <button
                 onClick={() => handleDelete(item.id)}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg inline-flex items-center gap-2"
+                className="w-full px-4 py-2 bg-red-500 text-white rounded-lg inline-flex items-center justify-center gap-2 sm:w-auto"
               >
                 <Trash2 size={16} />
                 Delete

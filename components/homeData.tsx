@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Building2, Home as HomeIcon, Waves, Mountain, Building, TentTree, Umbrella, Sprout } from "lucide-react";
 import home from "@/public/lottie/home.json";
 import Lottie from "lottie-react";
 export type Category = {
@@ -28,15 +29,15 @@ export type HomeProperty = {
 };
 
 export const categories: Category[] = [
-  { id: "all", label: "All homes", icon: "home" },
+  { id: "all", label: "All homes", icon: <HomeIcon className="h-4 w-4" strokeWidth={1.8} /> },
   
-  { id: "beach", label: "Beachfront", icon: "🏖️" },
-  { id: "mountain", label: "Mountain", icon: "⛰️" },
-  { id: "city", label: "City loft", icon: "🏙️" },
-  { id: "cabin", label: "Cabin", icon: "🌲" },
-  { id: "villa", label: "Villa", icon: "🏛️" },
-  { id: "island", label: "Island", icon: "🏝️" },
-  { id: "farm", label: "Farm stay", icon: "🌾" },
+  { id: "beach", label: "Beachfront", icon: <Waves className="h-4 w-4" strokeWidth={1.8} /> },
+  { id: "mountain", label: "Mountain", icon: <Mountain className="h-4 w-4" strokeWidth={1.8} /> },
+  { id: "city", label: "City loft", icon: <Building className="h-4 w-4" strokeWidth={1.8} /> },
+  { id: "cabin", label: "Cabin", icon: <TentTree className="h-4 w-4" strokeWidth={1.8} /> },
+  { id: "villa", label: "Villa", icon: <Building2 className="h-4 w-4" strokeWidth={1.8} /> },
+  { id: "island", label: "Island", icon: <Umbrella className="h-4 w-4" strokeWidth={1.8} /> },
+  { id: "farm", label: "Farm stay", icon: <Sprout className="h-4 w-4" strokeWidth={1.8} /> },
 ];
 
 export const categoryGradients: Record<string, [string, string]> = {

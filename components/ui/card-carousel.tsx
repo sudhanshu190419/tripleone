@@ -41,20 +41,22 @@ export const CardCarousel: React.FC<CarouselProps> = ({
         }
       `}</style>
 
-      <div className="mx-auto max-w-7xl px-3 sm:px-4 lg:px-6">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 lg:px-6">
         {/* Heading */}
         <div className="mb-8 flex flex-col items-center text-center sm:mb-12">
-          <span className="mb-3 text-[12px] font-semibold uppercase tracking-[0.24em] text-[#A67C52]">
+          <span className="mb-3 text-[11px] font-bold uppercase tracking-[0.24em] text-[#E07B54]">
             Stay Inspired
           </span>
 
-          <h3 className="max-w-2xl text-2xl sm:text-3xl md:text-5xl font-semibold tracking-tight text-[#1C1917] leading-[1.1]">
-            A glimpse into our spaces, stories & stays
+          <h3
+            className="max-w-3xl text-[clamp(1.7rem,5vw,3.1rem)] font-semibold leading-[1.12] tracking-[-0.03em] text-[#151110]"
+            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+          >
+            A glimpse into our <em className="italic underline decoration-[#191414] decoration-1 underline-offset-4">spaces</em>, stories & stays
           </h3>
 
-          <p className="mt-4 max-w-xl text-sm sm:text-[15px] md:text-base text-[#78716C] leading-relaxed px-2">
-            Explore real moments, curated interiors, and the experience of
-            staying with Haven.
+          <p className="mt-4 max-w-2xl text-[13px] sm:text-[15px] lg:text-[17px] leading-[1.75] text-[#6D6258] px-2">
+            Explore real moments, curated interiors, and the experience of staying with Haven.
           </p>
         </div>
 

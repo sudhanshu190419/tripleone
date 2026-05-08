@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRightIcon } from "@/components/havenIcons";
 import { marqueeItems, processSteps, stats } from "@/components/homeData";
 import { useCounter, useInView } from "@/components/havenHooks";
+import InspirationSkeleton from "@/components/skeletons/InspirationSkeleton";
 import { PROPERTY_LOCATION_COLLECTION } from "@/lib/propertyTaxonomy";
 import { usePropertyTaxonomy } from "@/hooks/usePropertyTaxonomy";
 
@@ -155,48 +156,62 @@ export default function HavenLowerSections() {
       </div>
 
       <section className="mx-auto w-full max-w-[1760px] px-[clamp(20px,5vw,56px)] pt-16 pb-12 sm:py-16">
-        <div ref={titleRef} className="mb-8 flex flex-wrap items-end justify-between gap-4 sm:mb-9" style={{ opacity: titleInView ? 1 : 0, transform: titleInView ? "translateY(0)" : "translateY(22px)", transition: "all .55s ease" }}>
-          <div>
+        <div
+          ref={titleRef}
+          className="mb-8 flex flex-col items-center justify-center gap-4 sm:mb-9"
+          style={{
+            opacity: titleInView ? 1 : 0,
+            transform: titleInView ? "translateY(0)" : "translateY(22px)",
+            transition: "all .55s ease",
+          }}
+        >
+          <div className="text-center">
             <div className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.15em] text-[#E07B54]">Inspiration</div>
-           <h2 className="font-display text-[clamp(2rem,4vw,3.4rem)] font-bold leading-[1.05] tracking-[-0.03em] text-[#1C1917]">
-  Explore stays
-  <br />
-  <span className="text-[#E07B54]">by destination</span>
-</h2>
-<p className="mt-4 max-w-md text-[15px] leading-[1.8] text-[#78716C]">
-  Discover premium stays curated for comfort, privacy and unforgettable experiences.
-</p>
+            <h2
+              className="text-[clamp(1.7rem,6vw,3rem)] font-semibold leading-[1.12] tracking-[-0.03em] text-[#151110]"
+              style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+              }}
+            >
+              Explore stays{" "}
+              <em className="italic underline decoration-[#191414] decoration-1 underline-offset-4">
+                by destination
+              </em>
+            </h2>
+            <p className="mx-auto mt-4 max-w-3xl text-[14px] sm:text-[16px] lg:text-[18px] leading-[1.8] text-[#6D6258]">
+              Discover premium stays curated for comfort, privacy and unforgettable experiences.
+            </p>
           </div>
 
           <button
-  onClick={() => router.push("/search")}
-  className="btn-outline inline-flex items-center gap-2 rounded-[32px] border-[1.5px] border-[#1C1917] bg-white px-6 py-[11px] text-[13px] font-bold text-[#1C1917] transition-all hover:bg-[#1C1917] hover:text-[#FAF8F5]"
->
+            onClick={() => router.push("/search")}
+            className="btn-outline inline-flex items-center gap-2 rounded-[32px] border-[1.5px] border-[#1C1917] bg-white px-6 py-[11px] text-[13px] font-bold text-[#1C1917] transition-all hover:bg-[#1C1917] hover:text-[#FAF8F5]"
+          >
             Explore all
             <ArrowRightIcon />
           </button>
         </div>
 
-        <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide">
-          {locationsLoading ? (
-            <div className="col-span-full rounded-[18px] border border-dashed border-[#EDE8E2] bg-white px-5 py-10 text-center text-sm text-[#A8A29E]">
-              Loading locations...
-            </div>
-          ) : destinationCards.length > 0 ? (
-            destinationCards.map((destination, index) => (
-              <DestinationCard
-                key={destination.locationName}
-                destination={destination}
-                index={index}
-                onClick={() => router.push(`/search?location=${encodeURIComponent(destination.locationName)}`)}
-              />
-            ))
-          ) : (
-            <div className="col-span-full rounded-[18px] border border-dashed border-[#EDE8E2] bg-white px-5 py-10 text-center text-sm text-[#A8A29E]">
-              Add locations in admin settings to show them here.
-            </div>
-          )}
-        </div>
+        {locationsLoading ? (
+          <InspirationSkeleton />
+        ) : (
+          <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide">
+            {destinationCards.length > 0 ? (
+              destinationCards.map((destination, index) => (
+                <DestinationCard
+                  key={destination.locationName}
+                  destination={destination}
+                  index={index}
+                  onClick={() => router.push(`/search?location=${encodeURIComponent(destination.locationName)}`)}
+                />
+              ))
+            ) : (
+              <div className="col-span-full rounded-[18px] border border-dashed border-[#EDE8E2] bg-white px-5 py-10 text-center text-sm text-[#A8A29E]">
+                Add locations in admin settings to show them here.
+              </div>
+            )}
+          </div>
+        )}
       </section>
 
       

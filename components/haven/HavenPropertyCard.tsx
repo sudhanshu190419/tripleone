@@ -106,27 +106,42 @@ const ImagePanel = memo(function ImagePanel({
           position: "absolute",
           top: 12,
           right: 12,
-          width: 34,
-          height: 34,
+          width: 40,
+          height: 40,
           borderRadius: "50%",
-          background: "rgba(255,255,255,0.88)",
-          backdropFilter: "blur(8px)",
-          border: "1px solid rgba(255,255,255,0.5)",
+          background: "rgba(255,255,255,0.96)",
+          border: "none",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           cursor: "pointer",
-          transition: "background .2s, transform .2s cubic-bezier(.34,1.56,.64,1)",
+          transition: "background-color .2s ease",
           zIndex: 2,
         }}
         onMouseEnter={(e) => {
-          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.98)";
+          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,1)";
         }}
         onMouseLeave={(e) => {
-          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.88)";
+          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.96)";
         }}
       >
-        <Share2 style={{ width: 14, height: 14, color: "#6f6257" }} />
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+          style={{ color: "#4B5563" }}
+        >
+          <path d="M12 16V4" />
+          <path d="M8 8l4-4 4 4" />
+          <path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
+        </svg>
       </button>
 
       {/* Rating badge — lives on image for premium feel */}
@@ -222,7 +237,7 @@ const ImagePanelFull = memo(function ImagePanelFull({
       style={{
         position: "relative",
         width: "100%",
-        paddingBottom: compact ? "84%" : "88%",
+        paddingBottom: compact ? "68%" : "88%",
         overflow: "hidden",
         borderRadius: compact ? "14px" : "18px",
         flexShrink: 0,
@@ -281,27 +296,42 @@ const ImagePanelFull = memo(function ImagePanelFull({
           position: "absolute",
           top: compact ? 8 : 12,
           right: compact ? 8 : 12,
-          width: compact ? 30 : 34,
-          height: compact ? 30 : 34,
+          width: compact ? 36 : 40,
+          height: compact ? 36 : 40,
           borderRadius: "50%",
-          background: "rgba(255,255,255,0.88)",
-          backdropFilter: "blur(8px)",
-          border: "1px solid rgba(255,255,255,0.5)",
+          background: "rgba(255,255,255,0.96)",
+          border: "none",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           cursor: "pointer",
-          transition: "background .2s, transform .2s cubic-bezier(.34,1.56,.64,1)",
+          transition: "background-color .2s ease",
           zIndex: 2,
         }}
         onMouseEnter={(e) => {
-          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.98)";
+          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,1)";
         }}
         onMouseLeave={(e) => {
-          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.88)";
+          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.96)";
         }}
       >
-        <Share2 style={{ width: 14, height: 14, color: "#6f6257" }} />
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+          style={{ color: "#4B5563" }}
+        >
+          <path d="M12 16V4" />
+          <path d="M8 8l4-4 4 4" />
+          <path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
+        </svg>
       </button>
 
       {/* Rating — bottom right on image */}
@@ -372,7 +402,7 @@ const initialOpacity = index < 4 ? 1 : (inView ? 1 : 0);
         opacity: inView ? 1 : 0,
         transform: inView ? "translateY(0)" : "translateY(15px)",
         transition: `opacity 0.6s ease ${delay}, transform 0.6s ease ${delay}`,
-        minHeight: isMobile ? "320px" : "420px",
+        minHeight: isMobile ? "240px" : "420px",
         // REMOVED contentVisibility and containIntrinsicSize
       }}
     >
@@ -384,10 +414,10 @@ const initialOpacity = index < 4 ? 1 : (inView ? 1 : 0);
         style={{
           // ── Surface ──
           background: "#FFFCF8",
-borderRadius: 24,
-border: "1px solid rgba(222, 212, 198, 0.75)",
-padding: 10,
-overflow: "visible",
+          borderRadius: isMobile ? 20 : 24,
+          border: "1px solid rgba(222, 212, 198, 0.75)",
+          padding: isMobile ? 8 : 10,
+          overflow: "visible",
           cursor: "pointer",
           display: "flex",
           flexDirection: "column",
@@ -415,7 +445,7 @@ overflow: "visible",
         {/* ── Body ── */}
         <div
           style={{
-            padding: isMobile ? "10px 8px 8px" : "14px 10px 10px",
+            padding: isMobile ? "8px 6px 6px" : "14px 10px 10px",
             display: "flex",
             flexDirection: "column",
             gap: 0,
@@ -492,14 +522,14 @@ overflow: "visible",
           {/* ── Divider ── */}
           <div
             style={{
-              marginTop: isMobile ? 10 : 14,
+              marginTop: isMobile ? 8 : 14,
               borderTop: "1px solid rgba(200,188,174,0.4)",
-              paddingTop: isMobile ? 10 : 14,
+              paddingTop: isMobile ? 8 : 14,
               display: "flex",
               justifyContent: "space-between",
               gap: 8,
-              flexDirection: isMobile ? "column" : "row",
-              alignItems: isMobile ? "stretch" : "center",
+              flexDirection: "row",
+              alignItems: "center",
             }}
           >
             {/* Price */}
@@ -508,8 +538,8 @@ overflow: "visible",
                 display: "flex",
                 alignItems: "baseline",
                 gap: 3,
-                justifyContent: isMobile ? "space-between" : "flex-start",
-                width: isMobile ? "100%" : "auto",
+                justifyContent: "flex-start",
+                width: "auto",
               }}
             >
               <span
@@ -542,7 +572,7 @@ overflow: "visible",
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 5,
-                padding: isMobile ? "7px 10px" : "8px 14px",
+                padding: isMobile ? "6px 12px" : "8px 14px",
                 background: hovered ? "#C76644" : "#E07B54",
                 color: "#fff",
                 fontSize: isMobile ? 11.25 : 12.5,
@@ -553,9 +583,9 @@ overflow: "visible",
                 transition: "background .2s ease, gap .2s cubic-bezier(.34,1.56,.64,1)",
                 whiteSpace: "nowrap",
                 flexShrink: 0,
-                width: isMobile ? "100%" : "auto",
+                width: "auto",
                 justifyContent: "center",
-                marginTop: isMobile ? 8 : 0,
+                marginTop: 0,
               }}
             >
               View stay

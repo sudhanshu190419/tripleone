@@ -72,7 +72,7 @@ export default function AdminPropertiesPage() {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-6 py-16">
+      <div className="max-w-6xl mx-auto px-4 py-10 sm:px-6 sm:py-16">
         <div className="mb-8 h-10 w-64 rounded-full bg-[#EDE5DB] animate-pulse" />
         <div className="space-y-4">
           {Array.from({ length: 5 }).map((_, index) => (
@@ -84,16 +84,16 @@ export default function AdminPropertiesPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-16">
+    <div className="max-w-6xl mx-auto px-4 py-10 sm:px-6 sm:py-16">
       <h1 className="text-3xl font-bold mb-8">Manage Properties</h1>
 
       <div className="space-y-4">
         {properties.map((property) => (
           <div
             key={property.id}
-            className="border rounded-xl p-5 flex items-center justify-between"
+            className="border rounded-xl p-4 flex flex-col gap-4 sm:p-5 sm:flex-row sm:items-center sm:justify-between"
           >
-            <div>
+            <div className="min-w-0">
               <h2 className="font-semibold text-lg">{property.title}</h2>
               <p className="text-sm text-neutral-500">
                 {property.location}
@@ -101,7 +101,7 @@ export default function AdminPropertiesPage() {
               <p className="text-sm mt-1">₹{property.price}</p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
               <button
   onClick={() =>
     toggleAvailability(
@@ -119,7 +119,7 @@ export default function AdminPropertiesPage() {
               </button>
                 <Link
   href={`/admin/properties/${property.id}`}
-  className="px-4 py-2 bg-black text-white rounded-lg"
+  className="px-4 py-2 bg-black text-white rounded-lg text-center"
 >
   Edit
 </Link>

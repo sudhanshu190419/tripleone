@@ -2,6 +2,17 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Building,
+  Building2,
+  Home as HomeIcon,
+  Mountain,
+  Sparkles,
+  Sprout,
+  TentTree,
+  Umbrella,
+  Waves,
+} from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/home/Hero";
 import FilterBar, { FilterValues } from "@/components/haven/FilterBar";
@@ -18,12 +29,64 @@ import {
 import { PROPERTY_CATEGORY_COLLECTION, PROPERTY_LOCATION_COLLECTION } from "@/lib/propertyTaxonomy";
 import { usePropertyTaxonomy } from "@/hooks/usePropertyTaxonomy";
 
-const destinationIcons: Record<string, React.ReactNode> = {
-  location: <MapPinIcon />,
-  landmark: <CalendarIcon />,
-  city: <UsersIcon />,
-  nature: <MapPinIcon />,
-  mountain: <MapPinIcon />,
+const destinationIconFor = (name: string) => {
+  const normalized = name.toLowerCase();
+
+  if (normalized.includes("delhi") || normalized.includes("noida") || normalized.includes("gurgaon") || normalized.includes("greater")) {
+    return <Building className="h-4 w-4" strokeWidth={1.8} />;
+  }
+
+  if (normalized.includes("mountain") || normalized.includes("hill") || normalized.includes("valley") || normalized.includes("uttrakhand") || normalized.includes("uttarakhand")) {
+    return <Mountain className="h-4 w-4" strokeWidth={1.8} />;
+  }
+
+  if (normalized.includes("beach") || normalized.includes("goa") || normalized.includes("maldives") || normalized.includes("coast")) {
+    return <Waves className="h-4 w-4" strokeWidth={1.8} />;
+  }
+
+  return <MapPinIcon />;
+};
+
+const stayTypeIcon = (name: string) => {
+  const normalized = name.toLowerCase();
+
+  if (normalized === "any type") {
+    return <Sparkles className="h-4 w-4" strokeWidth={1.8} />;
+  }
+
+  if (normalized.includes("home")) {
+    return <HomeIcon className="h-4 w-4" strokeWidth={1.8} />;
+  }
+
+  if (normalized.includes("villa")) {
+    return <Building2 className="h-4 w-4" strokeWidth={1.8} />;
+  }
+
+  if (normalized.includes("beach")) {
+    return <Waves className="h-4 w-4" strokeWidth={1.8} />;
+  }
+
+  if (normalized.includes("mountain")) {
+    return <Mountain className="h-4 w-4" strokeWidth={1.8} />;
+  }
+
+  if (normalized.includes("cabin")) {
+    return <TentTree className="h-4 w-4" strokeWidth={1.8} />;
+  }
+
+  if (normalized.includes("farm")) {
+    return <Sprout className="h-4 w-4" strokeWidth={1.8} />;
+  }
+
+  if (normalized.includes("island")) {
+    return <Umbrella className="h-4 w-4" strokeWidth={1.8} />;
+  }
+
+  if (normalized.includes("city") || normalized.includes("loft") || normalized.includes("studio")) {
+    return <Building className="h-4 w-4" strokeWidth={1.8} />;
+  }
+
+  return <UsersIcon />;
 };
 
 export default function HavenHome() {
@@ -59,6 +122,7 @@ const [filters, setFilters] = useState<FilterValues>({
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const destDropdownTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const typeDropdownTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
 
   useEffect(() => {
     const timer = window.setTimeout(() => setReady(true), 80);
@@ -138,15 +202,15 @@ const [filters, setFilters] = useState<FilterValues>({
   const suggestedDestinations = locations.map((location) => ({
     name: location.name,
     subtitle: `Explore stays in ${location.name}`,
-    icon: "city",
+    iconNode: destinationIconFor(location.name),
   }));
 
   const stayTypeOptions = [
-    { value: "any", label: "Any type", icon: "✦" },
+    { value: "any", label: "Any type", icon: stayTypeIcon("Any type") },
     ...categories.map((category) => ({
       value: category.name,
       label: category.name,
-      icon: "🏷️",
+      icon: stayTypeIcon(category.name),
     })),
   ];
 
@@ -387,7 +451,7 @@ const [filters, setFilters] = useState<FilterValues>({
                                   className="flex h-10 w-10 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl text-base shadow-sm sm:shadow-none"
                                   style={{ background: "#FEF3EE" }}
                                 >
-                                  {destinationIcons[dest.icon]}
+                                  {dest.iconNode}
                                 </div>
                                 <div className="min-w-0 flex-1">
                                   <p className="text-[13.5px] font-semibold truncate" style={{ color: "#1C1917" }}>

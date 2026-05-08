@@ -5,6 +5,7 @@ import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import HorizontalPropertySection from "./HorizontalPropertySection";
 import WhyChooseTripleOne from "./WhyChooseTripleOne";
+import WhyChooseTripleOneSkeleton from "../skeletons/WhyChooseTripleOneSkeleton";
 
 export default function HomeSections({
   filters,
@@ -12,7 +13,9 @@ export default function HomeSections({
   filters: any;
 }) {
   const [properties, setProperties] = useState<any[]>([]);
+
   const [loading, setLoading] = useState(true);
+  const [whyChooseLoading, setWhyChooseLoading] = useState(true);
   const filteredProperties = properties
   .filter((p) => {
     if (
@@ -87,12 +90,21 @@ export default function HomeSections({
         }));
 
         setProperties(data);
+        setLoading(false);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProperties();
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setWhyChooseLoading(false);
+    }, 600);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const featuredLuxury = filteredProperties.filter(
@@ -129,14 +141,20 @@ export default function HomeSections({
         loading={loading}
       />
 
-      <HorizontalPropertySection
-        title="Trending stays in <em>Noida</em>"
-        subtitle="Most booked spaces loved by guests this week."
-        properties={noidaStays}
-        loading={loading}
-      />
+      {!loading && (
+        <HorizontalPropertySection
+          title="Trending stays in <em>Noida</em>"
+          subtitle="Most booked spaces loved by guests this week."
+          properties={noidaStays}
+          loading={loading}
+        />
+      )}
 
-      <WhyChooseTripleOne />
+      {whyChooseLoading ? (
+        <WhyChooseTripleOneSkeleton />
+      ) : (
+        <WhyChooseTripleOne />
+      )}
     </>
   );
 }
