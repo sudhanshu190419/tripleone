@@ -252,7 +252,15 @@ export default function HavenHero({
                       style={{
                         background: focusIndex === idx ? "#FDF5F1" : "transparent",
                       }}
-                      onMouseDown={() => setFocusIndex(idx)}
+                      onMouseDown={(e) => {
+  if (isMobile) {
+    e.preventDefault();
+    onSearchFocus();
+    return;
+  }
+
+  setFocusIndex(idx);
+}}
                     >
                       <div className="flex items-center gap-2 sm:gap-2.5">
                         {/* Icon */}
@@ -289,11 +297,7 @@ export default function HavenHero({
                             readOnly={isMobile}
                             onFocus={(e) => {
                               setFocusIndex(idx);
-                              if (isMobile) {
-                                e.currentTarget.blur();
-                                onSearchFocus();
-                                return;
-                              }
+                              
 
                               if (field.label === "Destination" || field.label === "Stay Type") {
                                 onSearchFocus();
