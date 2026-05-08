@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import type { RefObject } from "react";
-import { useState } from 'react';
+import { useEffect, useState } from "react";
 
 import {
   CalendarIcon,
@@ -58,7 +58,17 @@ export default function HavenHero({
   onSearchFocus,
 }: HavenHeroProps) {
 
+  const [isMobile, setIsMobile] = useState(false);
+
   const router = useRouter();
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   const handleSearch = () => {
   if (!searchLocation.trim()) {
@@ -275,8 +285,20 @@ export default function HavenHero({
                             }}
                             placeholder={field.placeholder}
                             className="w-full truncate bg-transparent text-[13px] text-[#78716C] outline-none placeholder:text-[#C4BAB4]"
-                            onFocus={() => {
+                            inputMode={
+                              isMobile && field.label === "Stay Type"
+                                ? "none"
+                                : "text"
+                            }
+                            readOnly={isMobile && field.label === "Stay Type"}
+                            onFocus={(e) => {
                               setFocusIndex(idx);
+                              if (field.label === "Stay Type" && isMobile) {
+                                e.currentTarget.blur();
+                                onSearchFocus();
+                                return;
+                              }
+
                               if (
                                 field.label === "Destination" ||
                                 field.label === "Stay Type"
