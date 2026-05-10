@@ -65,6 +65,10 @@ export default function SearchResultsClient({
   filters.budget !== "undefined"
     ? PRICE_RANGES[filters.budget]
     : null;
+    const dateKey =
+      filters.date && filters.date !== "null" && filters.date !== "undefined"
+        ? filters.date
+        : "";
 
 const sortFn =
   filters.sort &&
@@ -77,7 +81,11 @@ const sortFn =
       const locMatch  = !locNorm  || norm(p.location).includes(locNorm) || locNorm.includes(norm(p.location));
       const typeMatch = !typeNorm || norm(p.category).includes(typeNorm);
       const budgMatch = !budgetFn || budgetFn(p.price);
-      return locMatch && typeMatch && budgMatch;
+      const blockedDates = (p.unavailableDates ?? [])
+        .map((entry) => (typeof entry === "string" ? entry : entry.date))
+        .filter(Boolean);
+      const dateMatch = !dateKey || !blockedDates.includes(dateKey);
+      return locMatch && typeMatch && budgMatch && dateMatch;
     });
 
     return sortFn ? [...filtered].sort(sortFn) : filtered;
@@ -111,12 +119,18 @@ const sortFn =
 }, [locationLabel]);
 
   const resultCount     = filteredProperties.length;
-  const hasActiveFilter = !!(filters.type || filters.budget || filters.sort);
+  const hasActiveFilter = !!(
+    filters.type ||
+    filters.budget ||
+    filters.sort ||
+    filters.date
+  );
 
   const activeChips = useMemo(() => {
     const chips: { key: keyof FilterValues; label: string }[] = [];
     if (filters.type)   chips.push({ key: "type",   label: filters.type   as string });
     if (filters.budget) chips.push({ key: "budget", label: filters.budget as string });
+    if (filters.date)   chips.push({ key: "date",   label: filters.date   as string });
     if (filters.sort)   chips.push({ key: "sort",   label: filters.sort   as string });
     return chips;
   }, [filters]);

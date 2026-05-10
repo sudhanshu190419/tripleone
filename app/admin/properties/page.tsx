@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
-import { collection, getDocs, deleteDoc, doc,updateDoc, } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import Link from "next/link";
 import AdminPropertySkeleton from "@/components/skeletons/AdminPropertySkeleton";
 
@@ -43,20 +49,6 @@ export default function AdminPropertiesPage() {
   }, []);
 
 
-  const toggleAvailability = async (
-  id: string,
-  currentValue: boolean
-) => {
-  try {
-    await updateDoc(doc(db, "properties", id), {
-      availability: !currentValue,
-    });
-
-    fetchProperties();
-  } catch (error) {
-    console.error(error);
-  }
-};
   const handleDelete = async (id: string) => {
     const confirmDelete = confirm("Delete this property?");
 
@@ -102,21 +94,6 @@ export default function AdminPropertiesPage() {
             </div>
 
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <button
-  onClick={() =>
-    toggleAvailability(
-      property.id,
-      property.availability
-    )
-  }
-  className={`px-4 py-2 rounded-lg text-sm ${
-    property.availability
-      ? "bg-green-100 text-green-700"
-      : "bg-red-100 text-red-700"
-  }`}
->
-                {property.availability ? "Available" : "Booked"}
-              </button>
                 <Link
   href={`/admin/properties/${property.id}`}
   className="px-4 py-2 bg-black text-white rounded-lg text-center"

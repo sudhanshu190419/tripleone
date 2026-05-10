@@ -37,6 +37,7 @@ const createInitialForm = () => ({
   address: "",
   checkIn: "",
   checkOut: "",
+  unavailableDates: [] as string[],
 });
 
 export default function EditPropertyPage() {
@@ -49,6 +50,7 @@ export default function EditPropertyPage() {
   ]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [form, setForm] = useState(createInitialForm());
+  const [dateInput, setDateInput] = useState("");
   const [propertyLoading, setPropertyLoading] = useState(true);
   const {
     items: locations,
@@ -104,6 +106,9 @@ export default function EditPropertyPage() {
           address: data.address || "",
           checkIn: data.checkIn || "",
           checkOut: data.checkOut || "",
+          unavailableDates: Array.isArray(data.unavailableDates)
+            ? data.unavailableDates
+            : [],
         });
       }
 
@@ -162,6 +167,7 @@ export default function EditPropertyPage() {
         rating: Number(form.rating),
         reviews: Number(form.reviews),
         images: imageUrls.length ? imageUrls : existingImages,
+        unavailableDates: form.unavailableDates,
       });
 
       alert("Property updated successfully");
@@ -230,6 +236,65 @@ export default function EditPropertyPage() {
           placeholder="Description"
           className="w-full border p-3 rounded-lg"
         />
+
+        <div className="rounded-xl border border-[#EDE5DB] bg-white p-4">
+          <p className="text-sm font-semibold mb-2">Unavailable Dates</p>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <div className="flex-1">
+              <label className="block text-xs font-medium text-neutral-500 mb-2">
+                Mark dates as unavailable
+              </label>
+              <input
+                type="date"
+                value={dateInput}
+                onChange={(e) => setDateInput(e.target.value)}
+                className="w-full border p-3 rounded-lg"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                if (!dateInput) return;
+                if (form.unavailableDates.includes(dateInput)) return;
+                setForm((prev) => ({
+                  ...prev,
+                  unavailableDates: [...prev.unavailableDates, dateInput].sort(),
+                }));
+                setDateInput("");
+              }}
+              className="px-4 py-3 rounded-lg bg-black text-white text-sm"
+            >
+              Add date
+            </button>
+          </div>
+
+          {form.unavailableDates.length > 0 ? (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {form.unavailableDates.map((date) => (
+                <button
+                  key={date}
+                  type="button"
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      unavailableDates: prev.unavailableDates.filter(
+                        (d) => d !== date
+                      ),
+                    }))
+                  }
+                  className="inline-flex items-center gap-2 rounded-full border border-[#EDE5DB] bg-[#FFF7F2] px-3 py-1 text-xs font-semibold text-[#B65D34]"
+                >
+                  {date}
+                  <span className="text-[11px]">×</span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-3 text-xs text-neutral-500">
+              No dates marked unavailable yet.
+            </p>
+          )}
+        </div>
         {["Main Image", "Side Image 1", "Side Image 2"].map((label, index) => (
           <div key={index}>
             <label className="block mb-2 text-sm font-medium">{label}</label>

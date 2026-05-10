@@ -17,6 +17,10 @@ const menuItems = [
     path: "/admin/properties",
   },
   {
+    name: "Availability",
+    path: "/admin/availability",
+  },
+  {
     name: "Locations",
     path: "/admin/settings/locations",
   },

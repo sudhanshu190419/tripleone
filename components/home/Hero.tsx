@@ -14,8 +14,10 @@ type HavenHeroProps = {
   ready: boolean;
   searchLocation: string;
   stayType: string;
+  
   setSearchLocation: (value: string) => void;
   setStayType: (value: string) => void;
+  
   focusIndex: number | null;
   setFocusIndex: (value: number | null) => void;
   stickyActive: boolean;
@@ -30,6 +32,11 @@ const searchFields = [
     icon: <MapPinIcon />,
     label: "Destination",
     placeholder: "Search destinations…",
+  },
+  {
+    icon: <CalendarIcon />,
+    label: "Date",
+    placeholder: "Select date",
   },
   {
     icon: <UsersIcon />,
@@ -48,8 +55,10 @@ export default function HavenHero({
   ready,
   searchLocation,
   stayType,
+  
   setSearchLocation,
   setStayType,
+  
   focusIndex,
   setFocusIndex,
   stickyActive,
@@ -83,6 +92,7 @@ export default function HavenHero({
   if (stayType.trim()) {
     params.set("type", stayType.trim());
   }
+  
 
   router.push(`/search?${params.toString()}`);
 };
@@ -279,6 +289,8 @@ export default function HavenHero({
                             value={
                               field.label === "Destination"
                                 ? searchLocation
+                                : field.label === "Date"
+                                ? ""
                                 : field.label === "Stay Type"
                                 ? stayType
                                 : undefined
@@ -287,19 +299,27 @@ export default function HavenHero({
                               if (field.label === "Destination") {
                                 setSearchLocation(e.target.value);
                               }
+                              
                               if (field.label === "Stay Type") {
                                 setStayType(e.target.value);
                               }
                             }}
                             placeholder={field.placeholder}
-                            className="w-full truncate bg-transparent text-[13px] text-[#78716C] outline-none placeholder:text-[#C4BAB4]"
-                            inputMode={isMobile ? "none" : "text"}
-                            readOnly={isMobile}
+                            className="w-full truncate bg-transparent text-[13px] text-[#78716C] outline-none placeholder:text-[#8B8178]"
+                            type="text"
+                            inputMode={
+                              isMobile && field.label !== "Date" ? "none" : "text"
+                            }
+                            readOnly={isMobile && field.label !== "Date"}
                             onFocus={(e) => {
                               setFocusIndex(idx);
-                              
 
-                              if (field.label === "Destination" || field.label === "Stay Type") {
+                              if (
+                                field.label === "Destination" ||
+                                field.label === "Stay Type" ||
+                                field.label === "Date"
+                                
+                              ) {
                                 onSearchFocus();
                               }
                             }}

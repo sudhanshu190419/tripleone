@@ -56,6 +56,9 @@ export default async function SearchPage({
     return {
       ...data,
       id: doc.id,
+      unavailableDates: Array.isArray(data.unavailableDates)
+        ? data.unavailableDates
+        : [],
       // Manually ensure the most common "problem" field is a string
       createdAt: data.createdAt?.toDate 
         ? data.createdAt.toDate().toISOString() 
@@ -71,6 +74,7 @@ export default async function SearchPage({
   const initialFilters: FilterValues = {
     type: extractParam(params.type) || null,
     location: extractParam(params.location) || null,
+    date: extractParam(params.date) || null,
     budget: extractParam(params.budget) || null,
     availability: null,
     sort: extractParam(params.sort) || null,

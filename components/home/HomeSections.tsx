@@ -41,6 +41,17 @@ export default function HomeSections({
       return false;
     }
 
+    if (filters.date) {
+      const blockedDates = (p.unavailableDates ?? [])
+        .map((entry: any) =>
+  typeof entry === "string" ? entry : entry.date
+)
+        .filter(Boolean);
+      if (blockedDates.includes(filters.date)) {
+        return false;
+      }
+    }
+
     return true;
   })
   .filter((p) => {

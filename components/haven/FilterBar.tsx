@@ -11,6 +11,7 @@ import { usePropertyTaxonomy } from "@/hooks/usePropertyTaxonomy";
 export type FilterValues = {
   type: string | null;
   location: string | null;
+  date: string | null;
   budget: string | null;
   availability: string | null;
   sort: string | null;
@@ -798,7 +799,15 @@ export default function FilterBar({ filters, setFilters, onOpenAllFilters }: Fil
   );
 
   const handleReset = useCallback(
-    () => setFilters({ type: null, location: null, budget: null, availability: null, sort: null }),
+    () =>
+      setFilters({
+        type: null,
+        location: null,
+        date: null,
+        budget: null,
+        availability: null,
+        sort: null,
+      }),
     [setFilters],
   );
 
