@@ -29,6 +29,7 @@ export default function HavenListings({
   budget: null,
   availability: null,
   sort: null,
+  date: null,
 });
   const [properties, setProperties] = useState<any[]>([]);
   useEffect(() => {
