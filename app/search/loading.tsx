@@ -40,6 +40,7 @@ export default function Loading() {
             mt-10
             flex gap-4 overflow-x-auto overflow-y-hidden
             snap-x snap-mandatory
+            pb-[100px] -mb-[80px] pt-4 -mt-4
             scrollbar-none
             sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible
             lg:grid-cols-3
