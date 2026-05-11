@@ -49,7 +49,9 @@ export default function SearchResultsClient({
 }: SearchResultsClientProps) {
   const [filters, setFilters]       = useState<FilterValues>(initialFilters);
   const [isFiltering, setFiltering] = useState(false);
-  const rafRef                      = useRef<number>(0);
+  const rafRef = useRef<number>(0);
+  const mobileTrackRef = useRef<HTMLDivElement>(null);
+const [activeIndex, setActiveIndex] = useState(0);
 
   const filteredProperties = useMemo(() => {
     const locNorm  = norm(filters.location);
@@ -92,6 +94,8 @@ const sortFn =
   }, [filters, properties]);
 
   const handleFilterChange = useCallback(
+
+    
   (next: React.SetStateAction<FilterValues>) => {
     setFiltering(true);
     setFilters(next);
@@ -103,6 +107,36 @@ const sortFn =
   },
   []
 );
+
+useEffect(() => {
+  const el = mobileTrackRef.current;
+
+  if (!el) return;
+
+  const handleScroll = () => {
+    const cardWidth =
+      el.firstElementChild?.clientWidth || 1;
+
+    const gap = 16;
+
+    const index = Math.round(
+      el.scrollLeft / (cardWidth + gap)
+    );
+
+    setActiveIndex(index);
+  };
+
+  el.addEventListener("scroll", handleScroll, {
+    passive: true,
+  });
+
+  return () => {
+    el.removeEventListener(
+      "scroll",
+      handleScroll
+    );
+  };
+}, [filteredProperties]);
 
   const locationLabel = useMemo(
     () => filters.location?.trim().split(/,\s*/)[0] || "your destination",
@@ -255,10 +289,10 @@ const sortFn =
           />
         </section>
 
-        <div className="mx-auto max-w-[1320px] px-4 pb-24 sm:px-8 lg:px-12">
+        <div className="mx-auto max-w-[1320px] px-4 pb-12 sm:pb-16 sm:px-8 lg:px-12">
 
           {/*Filter Bar */}
-          <div className="mt-2">
+          <div className="mt-2 -mx-4 sm:mx-0">
             <FilterBar filters={filters} setFilters={handleFilterChange} />
           </div>
 
@@ -287,26 +321,29 @@ const sortFn =
           )}
 
           {/*  Results  */}
+          {/* Results  */}
           <main
-  className="mt-10 sm:mt-12 min-h-[600px]" // Reserve space for at least two rows of cards
-  style={{
-    opacity: isFiltering ? 0.5 : 1,
-    transition: "opacity 200ms ease",
-  }}
->
+            className="mt-10 sm:mt-12" 
+            style={{
+              opacity: isFiltering ? 0.5 : 1,
+              transition: "opacity 200ms ease",
+            }}
+          >
             {resultCount > 0 ? (
+              <>
   <div
-  key={`grid-${JSON.stringify(filters)}`}
-  className="
-    flex gap-4 overflow-x-auto 
-    snap-x snap-mandatory touch-pan-x items-stretch
-    /* FIX: Massive bottom padding for the shadow, offset by negative margin */
-    pb-[100px] -mb-[80px] pt-4 -mt-4
-    scrollbar-none
-    sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible
-    lg:grid-cols-3 xl:grid-cols-4
-  "
->
+                  ref={mobileTrackRef}
+                  key={`grid-${JSON.stringify(filters)}`}
+                  className="
+                    flex gap-4 overflow-x-auto 
+                    snap-x snap-mandatory touch-pan-x touch-pan-y items-stretch
+                    /* FIX: Massive bottom padding for the shadow, offset by negative margin */
+                    pb-[100px] -mb-[80px] pt-4 -mt-4
+                    [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]
+                    sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible
+                    lg:grid-cols-3 xl:grid-cols-4
+                  "
+                >
                 {filteredProperties.map((property, index) => (
                   <div
                     key={property.id}
@@ -317,14 +354,22 @@ const sortFn =
                   </div>
                 ))}
               </div>
-            ) : (
+
+<DotIndicators
+  total={filteredProperties.length}
+  activeIndex={activeIndex}
+/>
+</>
+
+) : (
               <EmptyState onReset={() => setFilters(initialFilters)} />
             )}
           </main>
 
           {/* ── Footer ──────────────────────────────────────────────────── */}
+          {/* ── Footer ──────────────────────────────────────────────────── */}
           {resultCount > 0 && (
-            <footer className="mt-24 flex flex-col items-center gap-3">
+            <footer className="mt-12 sm:mt-16 flex flex-col items-center gap-3">
               <span className="h-px w-10 bg-[#1C1917]/20" />
               <p className="haven-serif text-[15px] italic text-[#1C1917]/55">
                 End of collection
@@ -340,9 +385,56 @@ const sortFn =
   );
 }
 
+function DotIndicators({
+  total,
+  activeIndex,
+}: {
+  total: number;
+  activeIndex: number;
+}) {
+  if (total <= 1) return null;
+
+  const MAX = 5;
+
+  const start = Math.max(
+    0,
+    Math.min(activeIndex - 2, total - MAX)
+  );
+
+  const dots = Array.from(
+    { length: Math.min(total, MAX) },
+    (_, i) => start + i
+  );
+
+  return (
+    <div className="mt-5 flex items-center justify-center gap-2 sm:hidden">
+      {dots.map((idx) => {
+        const isActive = idx === activeIndex;
+
+        return (
+          <span
+            key={idx}
+            className="block rounded-full transition-all duration-300"
+            style={{
+              width: isActive ? 20 : 6,
+              height: 6,
+              background: isActive
+                ? "#6b5f52"
+                : "#D6CFC6",
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
 // ─── Empty State ──────────────────────────────────────────────────────────────
 
 function EmptyState({ onReset }: { onReset: () => void }) {
+
+  
+
+  
   return (
     <div className="flex min-h-[480px] flex-col items-center justify-center px-6 py-20 text-center">
 

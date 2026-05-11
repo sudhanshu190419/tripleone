@@ -216,25 +216,25 @@ export default function HavenHero({
 
           {/* ── GLASS CARD ──────────────────────────────────────────────────── */}
           <div
-            className="hero-card w-full max-w-[860px] rounded-3xl border border-white/70 bg-white/72 px-8 py-10 text-center shadow-[0_8px_48px_rgba(0,0,0,0.10),0_1px_0_rgba(255,255,255,0.9)_inset] sm:px-12 sm:py-12"
+            className="hero-card w-full max-w-[860px] rounded-2xl sm:rounded-3xl border border-white/70 bg-white/72 px-5 py-8 text-center shadow-[0_8px_48px_rgba(0,0,0,0.10),0_1px_0_rgba(255,255,255,0.9)_inset] sm:px-12 sm:py-12"
             style={{ backdropFilter: "blur(22px)", WebkitBackdropFilter: "blur(22px)" }}
           >
 
             {/* Badge */}
-            <div className="hero-badge  mb-7 inline-flex items-center gap-2 rounded-full border border-[#F8D5C4] bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#B85A30]">
+            <div className="hero-badge mb-5 sm:mb-7 inline-flex items-center gap-2 rounded-full border border-[#F8D5C4] bg-white px-3 sm:px-4 py-1.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.08em] text-[#B85A30]">
               <span className="dot-pulse block h-1.5 w-1.5 rounded-full bg-[#E07B54]" />
               Curated stays · Memorable escapes
             </div>
 
             {/* Headline */}
-            <h1 className="hero-h1 mb-4 text-[clamp(2.4rem,5.5vw,4rem)] font-bold leading-[1.06] tracking-[-0.025em] text-[#1C1917]"
+            <h1 className="hero-h1 mb-3 sm:mb-4 text-[clamp(2.1rem,7.5vw,4rem)] font-bold leading-[1.06] tracking-[-0.025em] text-[#1C1917]"
                 style={{ fontFamily: "'Playfair Display', serif" }}>
               TripleOne<br />
               <em className="italic text-[#E07B54]">Your comfort zone.</em>
             </h1>
 
             {/* Subtitle */}
-            <p className="hero-sub mx-auto mb-8 max-w-[460px] text-[clamp(14px,1.8vw,16px)] font-normal leading-[1.8] text-[#57534E]">
+            <p className="hero-sub mx-auto mb-6 sm:mb-8 max-w-[460px] text-[clamp(13px,1.8vw,16px)] font-normal leading-[1.6] sm:leading-[1.8] text-[#57534E]">
               Discover premium villas, hotels &amp; private spaces for your next escape.
             </p>
 

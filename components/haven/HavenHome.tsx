@@ -430,7 +430,7 @@ export default function HavenHome() {
           {/* ── Top Navigation ── */}
           <div
             className="flex items-center justify-between px-4 pb-4"
-            style={{ paddingTop: "env(safe-area-inset-top, 48px)", background: "#fff", borderBottom: "1px solid #F0EBE4" }}
+            style={{ paddingTop: "max(env(safe-area-inset-top), 24px)", background: "#fff", borderBottom: "1px solid #F0EBE4" }}
           >
             <button
               onClick={mobileBack}
