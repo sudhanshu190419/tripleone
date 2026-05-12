@@ -26,6 +26,7 @@ export type HomeProperty = {
   checkIn: string;
   checkOut: string;
   unavailableDates?: Array<string | { date: string; reason?: string }>;
+  amenities?: string[];
   
 };
 

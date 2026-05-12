@@ -452,8 +452,7 @@ function HavenPropertyCard({
 
                 borderRadius: 12,
 
-                border:
-                  "1px solid rgba(180,155,120,0.35)",
+                
 
                 background:
   "linear-gradient(180deg, #F7F1EA 0%, #EFE4D8 100%)",
